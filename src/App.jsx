@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { useScroll } from 'framer-motion'
 import Header from './components/Header'
+import SocialRail from './components/SocialRail'
 import SoldierScrollFigure from './components/SoldierScrollFigure'
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
   return (
     <div className="bg-canvas">
       <Header />
+      <SocialRail />
 
       <div ref={stageRef} className="relative h-[240vh]">
         <div className="sticky top-0 h-screen w-full overflow-hidden">

@@ -11,3 +11,37 @@ body {
   color: var(--color-ink);
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
+
+@keyframes promo-wave {
+  0%,
+  100% {
+    background-position:
+      0% 45%,
+      100% 55%;
+  }
+  25% {
+    background-position:
+      35% 65%,
+      65% 30%;
+  }
+  50% {
+    background-position:
+      65% 25%,
+      30% 70%;
+  }
+  75% {
+    background-position:
+      90% 55%,
+      15% 40%;
+  }
+}
+
+.promo-gradient {
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.16), transparent 60%),
+    radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent 55%);
+  background-size:
+    180% 180%,
+    220% 220%;
+  animation: promo-wave 24s ease-in-out infinite;
+}
