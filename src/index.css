@@ -1,1 +1,13 @@
 @import 'tailwindcss';
+
+@theme {
+  --color-canvas: #eeeeec;
+  --color-ink: #141412;
+  --color-muted: #78776f;
+}
+
+body {
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}

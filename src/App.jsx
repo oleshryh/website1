@@ -1,9 +1,23 @@
+import { useRef } from 'react'
+import { useScroll } from 'framer-motion'
+import Header from './components/Header'
+import SoldierScrollFigure from './components/SoldierScrollFigure'
+
 function App() {
+  const stageRef = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: stageRef,
+    offset: ['start start', 'end end'],
+  })
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white">
-      <div className="text-center">
-        <h1 className="text-4xl font-semibold text-gray-900">Site1</h1>
-        <p className="mt-2 text-gray-500">React + Vite + Tailwind is ready.</p>
+    <div className="bg-canvas">
+      <Header />
+
+      <div ref={stageRef} className="relative h-[240vh]">
+        <div className="sticky top-0 h-screen w-full overflow-hidden">
+          <SoldierScrollFigure progress={scrollYProgress} />
+        </div>
       </div>
     </div>
   )
