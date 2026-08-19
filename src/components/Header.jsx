@@ -76,25 +76,21 @@ function LanguageSwitcher() {
   const [lang, setLang] = useState('EN')
 
   return (
-    <div className="hidden items-center gap-1.5 text-sm sm:flex">
-      {LANGUAGES.map((code, i) => {
+    <div className="hidden h-9 items-center gap-0.5 rounded-[4px] bg-ink/[0.05] p-1 sm:flex">
+      {LANGUAGES.map((code) => {
         const active = code === lang
         return (
-          <span key={code} className="flex items-center gap-1.5">
-            {i > 0 && <span className="text-ink/20">/</span>}
-            <button
-              type="button"
-              onClick={() => setLang(code)}
-              aria-pressed={active}
-              className={`transition-colors ${
-                active
-                  ? 'font-medium text-ink underline decoration-ink/30 underline-offset-4'
-                  : 'text-ink/40 hover:text-ink'
-              }`}
-            >
-              {code}
-            </button>
-          </span>
+          <button
+            key={code}
+            type="button"
+            onClick={() => setLang(code)}
+            aria-pressed={active}
+            className={`flex h-full items-center rounded-[4px] px-2.5 text-xs transition-colors ${
+              active ? 'bg-white font-medium text-ink shadow-sm' : 'text-ink/40 hover:text-ink/70'
+            }`}
+          >
+            {code}
+          </button>
         )
       })}
     </div>
@@ -105,13 +101,13 @@ function PromoBar() {
   return (
     <a
       href="#"
-      className="group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-t-3xl rounded-b-lg bg-gradient-to-r from-[#3c3c35] via-[#46463f] to-[#3c3c35] px-4 py-2 text-xs text-white/50 shadow-[0_6px_16px_rgba(20,20,18,0.12)]"
+      className="group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-t-3xl rounded-b-lg bg-gradient-to-r from-[#6d6d66] via-[#78786f] to-[#6d6d66] px-4 py-2 text-xs text-white/90 shadow-[0_6px_16px_rgba(20,20,18,0.1)]"
     >
       <span className="promo-gradient pointer-events-none absolute inset-0" />
-      <SparkleIcon width={12} height={12} className="relative shrink-0 opacity-60" />
+      <SparkleIcon width={12} height={12} className="relative shrink-0 opacity-80" />
       <span className="relative">Realistic training without live ammunition</span>
-      <span className="relative text-white/25">·</span>
-      <span className="relative flex items-center gap-1 font-medium text-white/75">
+      <span className="relative text-white/50">·</span>
+      <span className="relative flex items-center gap-1 font-medium text-white">
         Learn more
         <ArrowUpRightIcon width={12} height={12} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
       </span>
@@ -149,7 +145,7 @@ export default function Header() {
         onMouseLeave={hideProducts}
         className="w-full overflow-hidden rounded-t-lg rounded-b-3xl border border-white/60 bg-white/70 shadow-[0_20px_60px_rgba(20,20,18,0.12)] backdrop-blur-2xl"
       >
-        <div className="flex items-center justify-between gap-6 px-6 py-4">
+        <div className="flex items-center justify-between gap-6 px-3 py-4">
           <a href="#top" className="flex items-center gap-2.5 text-ink">
             <Logo />
             <span className="text-lg font-medium tracking-wide">ATMARAKSI</span>
@@ -181,11 +177,11 @@ export default function Header() {
             </a>
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <LanguageSwitcher />
             <a
               href="#contact"
-              className="rounded-lg bg-ink px-4 py-2 text-xs font-medium text-white shadow-sm transition-colors duration-300 hover:bg-ink/80"
+              className="flex h-9 items-center justify-center rounded-[4px] bg-ink px-4 text-xs font-medium text-white shadow-sm transition-colors duration-300 hover:bg-ink/80"
             >
               Contact Us
             </a>
@@ -204,7 +200,7 @@ export default function Header() {
                 opacity: { duration: 0.3, ease: 'easeOut' },
               }}
             >
-              <div className="grid grid-cols-1 gap-3 px-4 pb-4 sm:grid-cols-3">
+              <div className="grid grid-cols-1 gap-3 px-3 pb-3 sm:grid-cols-3">
                 {PRODUCTS.map(({ slug, name, description }) => (
                   <a
                     key={slug}

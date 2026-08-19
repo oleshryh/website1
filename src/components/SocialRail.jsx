@@ -43,7 +43,7 @@ export default function SocialRail() {
           key={label}
           href="#"
           aria-label={label}
-          className="flex h-11 w-11 items-center justify-center rounded-lg bg-white text-ink shadow-sm transition-all duration-200 hover:-translate-x-1 hover:shadow-md"
+          className="flex h-11 w-11 items-center justify-center rounded-[4px] bg-white text-ink shadow-sm transition-all duration-200 hover:-translate-x-1 hover:shadow-md"
         >
           <Icon width={18} height={18} />
         </a>
