@@ -26,12 +26,16 @@ export default function SoldierScrollFigure({ progress }) {
   })
 
   return (
-    <motion.img
-      src={FRAME_SRCS[frame]}
-      alt="ATMARAKSI VR training soldier"
-      style={{ x: '-50%', scale }}
-      className="pointer-events-none absolute bottom-0 left-1/2 h-2/3 w-auto origin-bottom select-none object-contain"
-      draggable={false}
-    />
+    // The wrapper owns the placement so it can stay centred on wide screens but
+    // tuck against the right edge — and shrink — once the copy needs the room.
+    <div className="pointer-events-none absolute inset-x-0 bottom-0 flex h-[min(38%,55vw)] justify-center sm:h-[min(54%,37vw)] sm:justify-end lg:h-[min(66.67%,45vw)] lg:justify-center">
+      <motion.img
+        src={FRAME_SRCS[frame]}
+        alt="ATMARAKSI VR training soldier"
+        style={{ scale }}
+        className="h-full w-auto max-w-none origin-bottom select-none object-contain"
+        draggable={false}
+      />
+    </div>
   )
 }

@@ -37,7 +37,7 @@ const SOCIALS = [
 
 export default function SocialRail() {
   return (
-    <div className="fixed right-4 top-1/2 z-40 flex -translate-y-1/2 flex-col gap-3 md:right-6">
+    <div className="fixed right-4 top-1/2 z-40 hidden -translate-y-1/2 flex-col gap-3 md:right-6 md:flex">
       {SOCIALS.map(({ Icon, label }) => (
         <a
           key={label}

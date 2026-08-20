@@ -17,23 +17,30 @@ function ProductMark(props) {
   )
 }
 
+// Drop a replacement photo at the same path to swap the artwork — the tint on
+// top keeps every card in the same green key whatever the source image is.
 const PRODUCTS = [
   {
     slug: 'training-simulator-for-shooting-with-dshk-pkm-browning',
     name: 'Machine Gun Training',
     description: 'Realistic training on DShK, PKM and Browning.',
+    image: '/products/machine-gun.jpg',
   },
   {
     slug: 'rpg-7-grenade-launcher-shooting-simulator',
     name: 'RPG-7 Training',
     description: 'Master the RPG-7 launcher safely.',
+    image: '/products/rpg-7.jpg',
   },
   {
     slug: 'ftp-drone-countermeasure-trainer',
     name: 'FPV Drone Defense Training',
     description: 'Detect and counter FPV drone threats.',
+    image: '/products/fpv-drone.jpg',
   },
 ]
+
+const PHOTO_TINT = 'linear-gradient(155deg, rgba(255,255,255,0.34), rgba(240,246,231,0.5))'
 
 function Logo() {
   return (
@@ -101,12 +108,12 @@ function PromoBar() {
   return (
     <a
       href="#"
-      className="group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-t-3xl rounded-b-lg bg-gradient-to-r from-[#6d6d66] via-[#78786f] to-[#6d6d66] px-4 py-2 text-xs text-white/90 shadow-[0_6px_16px_rgba(20,20,18,0.1)]"
+      className="group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-t-3xl rounded-b-lg bg-gradient-to-r from-[#6d6d66] via-[#78786f] to-[#6d6d66] px-4 py-2 text-[11px] text-white/90 shadow-[0_6px_16px_rgba(20,20,18,0.1)] sm:text-xs"
     >
       <span className="promo-gradient pointer-events-none absolute inset-0" />
-      <SparkleIcon width={12} height={12} className="relative shrink-0 opacity-80" />
+      <SparkleIcon width={12} height={12} className="relative hidden shrink-0 opacity-80 sm:block" />
       <span className="relative">Realistic training without live ammunition</span>
-      <span className="relative text-white/50">·</span>
+      <span className="relative hidden text-white/50 sm:inline">·</span>
       <span className="relative flex items-center gap-1 font-medium text-white">
         Learn more
         <ArrowUpRightIcon width={12} height={12} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -115,8 +122,22 @@ function PromoBar() {
   )
 }
 
+function MenuIcon({ open }) {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
+      <path
+        d={open ? 'M6 6 18 18M18 6 6 18' : 'M4 7h16M4 12h16M4 17h16'}
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
 export default function Header() {
   const [productsOpen, setProductsOpen] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
   const closeTimer = useRef(null)
   const wrapRef = useRef(null)
 
@@ -148,10 +169,12 @@ export default function Header() {
         <div className="flex items-center justify-between gap-6 px-3 py-4">
           <a href="#top" className="flex items-center gap-2.5 text-ink">
             <Logo />
-            <span className="text-lg font-medium tracking-wide">ATMARAKSI</span>
+            <span className="text-base font-medium tracking-wide sm:text-[17px] lg:text-lg">
+              ATMARAKSI
+            </span>
           </a>
 
-          <nav className="hidden items-center gap-8 text-sm text-ink/70 md:flex">
+          <nav className="hidden items-center gap-8 text-sm text-ink/70 lg:flex">
             <a href="#top" onMouseEnter={hideProducts} className="transition-colors hover:text-ink">
               Home
             </a>
@@ -181,12 +204,61 @@ export default function Header() {
             <LanguageSwitcher />
             <a
               href="#contact"
-              className="flex h-9 items-center justify-center rounded-[4px] bg-ink px-4 text-xs font-medium text-white shadow-sm transition-colors duration-300 hover:bg-ink/80"
+              className="flex h-8 items-center justify-center rounded-[4px] bg-ink px-3 text-[11px] font-medium text-white shadow-sm transition-colors duration-300 hover:bg-ink/80 sm:h-9 sm:px-4 sm:text-xs"
             >
               Contact Us
             </a>
+            <button
+              type="button"
+              onClick={() => setMenuOpen((open) => !open)}
+              aria-expanded={menuOpen}
+              aria-label="Menu"
+              className="flex h-9 w-9 items-center justify-center rounded-[4px] text-ink transition-colors hover:bg-ink/[0.06] lg:hidden"
+            >
+              <MenuIcon open={menuOpen} />
+            </button>
           </div>
         </div>
+
+        <AnimatePresence initial={false}>
+          {menuOpen && (
+            <motion.div
+              key="mobile-menu"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{
+                height: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
+                opacity: { duration: 0.25, ease: 'easeOut' },
+              }}
+              className="lg:hidden"
+            >
+              <nav className="flex flex-col gap-1 px-3 pb-3 text-sm text-ink/70">
+                <a href="#top" className="rounded-lg px-3 py-2.5 hover:bg-ink/[0.05]">
+                  Home
+                </a>
+                <a href="#about" className="rounded-lg px-3 py-2.5 hover:bg-ink/[0.05]">
+                  About Us
+                </a>
+                <p className="px-3 pb-1 pt-3 text-xs uppercase tracking-wide text-ink/35">
+                  Products
+                </p>
+                {PRODUCTS.map(({ slug, name }) => (
+                  <a
+                    key={slug}
+                    href={`/products/${slug}`}
+                    className="rounded-lg px-3 py-2.5 text-ink hover:bg-ink/[0.05]"
+                  >
+                    {name}
+                  </a>
+                ))}
+                <a href="#" className="mt-3 rounded-lg px-3 py-2.5 hover:bg-ink/[0.05]">
+                  Support
+                </a>
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <AnimatePresence initial={false}>
           {productsOpen && (
@@ -201,15 +273,28 @@ export default function Header() {
               }}
             >
               <div className="grid grid-cols-1 gap-3 px-3 pb-3 sm:grid-cols-3">
-                {PRODUCTS.map(({ slug, name, description }) => (
+                {PRODUCTS.map(({ slug, name, description, image }) => (
                   <a
                     key={slug}
                     href={`/products/${slug}`}
-                    className="group rounded-xl bg-ink/[0.06] p-5 transition-colors hover:bg-ink/[0.1]"
+                    className="group relative isolate overflow-hidden rounded-xl bg-ink/[0.06] p-5 transition-colors hover:bg-ink/[0.1]"
                   >
-                    <ProductMark width={16} height={15} className="mb-6 text-ink/70" />
-                    <h3 className="mb-0.5 text-sm font-normal text-ink">{name}</h3>
-                    <p className="text-xs leading-snug text-ink/55">{description}</p>
+                    <span
+                      aria-hidden="true"
+                      style={{ backgroundImage: `${PHOTO_TINT}, url('${image}')` }}
+                      className="absolute inset-0 -z-10 bg-cover bg-center opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                    />
+                    <ProductMark
+                      width={16}
+                      height={15}
+                      className="mb-6 text-ink/70 transition-colors duration-300 group-hover:text-[#31461f]"
+                    />
+                    <h3 className="mb-0.5 text-sm font-normal text-ink transition-colors duration-300 group-hover:text-[#223213]">
+                      {name}
+                    </h3>
+                    <p className="text-xs leading-snug text-ink/55 transition-colors duration-300 group-hover:text-[#3d5228]">
+                      {description}
+                    </p>
                   </a>
                 ))}
               </div>
