@@ -1,12 +1,29 @@
 import { execFileSync } from 'node:child_process'
 import { mkdirSync, readdirSync, rmSync } from 'node:fs'
-import { join } from 'node:path'
+import { basename, join } from 'node:path'
 import ffmpegPath from 'ffmpeg-static'
 import sharp from 'sharp'
 
-const VIDEO = 'media/video1.mp4'
-const RAW_DIR = '.frame-cache/raw'
-const OUT_DIR = 'public/frames'
+// node scripts/process-video.mjs [video] [outDir] [--canvas WxH]
+// The canvas override exists so a second clip can be keyed onto the *first*
+// clip's canvas geometry. Both sets then render at identical dimensions, and a
+// sequence can hand over to the next one mid-scroll without the figure
+// changing size. Left to itself each clip sizes its canvas to its own widest
+// pose, which differs between takes.
+const [, , videoArg, outDirArg, ...flags] = process.argv
+const VIDEO = videoArg ?? 'media/video1.mp4'
+const OUT_DIR = outDirArg ?? 'public/frames'
+const RAW_DIR = join('.frame-cache', `raw-${basename(OUT_DIR)}`)
+
+const canvasFlag = flags.indexOf('--canvas')
+const CANVAS_OVERRIDE =
+  canvasFlag === -1
+    ? null
+    : (() => {
+        const match = /^(\d+)x(\d+)$/.exec(flags[canvasFlag + 1] ?? '')
+        if (!match) throw new Error('--canvas expects WxH, e.g. --canvas 765x472')
+        return { width: Number(match[1]), height: Number(match[2]) }
+      })()
 const EXTRACT_FPS = 20
 const OUT_WIDTH = 800
 // Pixels at/above this "whiteness" are fully transparent; below WHITE_FLOOR fully opaque; feathered in between.
@@ -20,7 +37,7 @@ rmSync(OUT_DIR, { recursive: true, force: true })
 mkdirSync(RAW_DIR, { recursive: true })
 mkdirSync(OUT_DIR, { recursive: true })
 
-execFileSync(ffmpegPath, ['-i', VIDEO, '-vf', `fps=${EXTRACT_FPS}`, join(RAW_DIR, 'frame-%03d.png')], { stdio: 'inherit' })
+execFileSync(ffmpegPath, ['-y', '-i', VIDEO, '-vf', `fps=${EXTRACT_FPS}`, join(RAW_DIR, 'frame-%03d.png')], { stdio: 'inherit' })
 
 const files = readdirSync(RAW_DIR).filter((f) => f.endsWith('.png')).sort()
 console.log(`Extracted ${files.length} raw frames, keying out white background...`)
@@ -73,12 +90,18 @@ const maxBboxW = Math.max(...perFrameBounds.map((b) => b.width))
 const maxBboxH = Math.max(...perFrameBounds.map((b) => b.height))
 const padX = Math.round(maxBboxW * CANVAS_PADDING)
 const padTop = Math.round(maxBboxH * CANVAS_PADDING)
-const canvasW = maxBboxW + padX * 2
 // No bottom padding: the tallest pose's feet sit exactly on the canvas floor
 // so the rendered frame never has a transparent gap under the boots.
-const canvasH = maxBboxH + padTop
+const canvasW = CANVAS_OVERRIDE?.width ?? maxBboxW + padX * 2
+const canvasH = CANVAS_OVERRIDE?.height ?? maxBboxH + padTop
 
-console.log(`Stabilized canvas: ${canvasW}x${canvasH} (widest pose ${maxBboxW}x${maxBboxH})`)
+if (canvasW < maxBboxW || canvasH < maxBboxH) {
+  throw new Error(`Canvas ${canvasW}x${canvasH} is smaller than the widest pose ${maxBboxW}x${maxBboxH}`)
+}
+
+console.log(
+  `Stabilized canvas: ${canvasW}x${canvasH}${CANVAS_OVERRIDE ? ' (override)' : ''} (widest pose ${maxBboxW}x${maxBboxH})`,
+)
 
 for (const [i, buf] of buffers.entries()) {
   const b = perFrameBounds[i]

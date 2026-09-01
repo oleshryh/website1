@@ -1,3 +1,5 @@
+import useScrollFade from './useScrollFade'
+
 function YoutubeIcon(props) {
   return (
     <svg viewBox="0 0 24 24" fill="none" {...props}>
@@ -35,9 +37,17 @@ const SOCIALS = [
   { Icon: InstagramIcon, label: 'Instagram' },
 ]
 
-export default function SocialRail() {
+export default function SocialRail({ exit }) {
+  // The rail sits in the lane the figure parks in on the third screen, and
+  // three floating buttons over the soldier read as clutter — so it steps
+  // aside with the rest of the first two screens.
+  const opacity = useScrollFade(exit, [0.3, 0.55], [1, 0])
+
   return (
-    <div className="fixed right-4 top-1/2 z-40 hidden -translate-y-1/2 flex-col gap-3 md:right-6 md:flex">
+    <div
+      style={{ opacity, pointerEvents: opacity === 0 ? 'none' : undefined }}
+      className="fixed right-4 top-1/2 z-40 hidden -translate-y-1/2 flex-col gap-3 md:right-6 md:flex"
+    >
       {SOCIALS.map(({ Icon, label }) => (
         <a
           key={label}

@@ -145,14 +145,18 @@ export function HeroCallouts({ progress }) {
   )
 }
 
-export default function Hero({ progress }) {
+export default function Hero({ progress, exit }) {
   // Headline block and quote fade together, well before the second screen
-  // arrives. The CTAs never fade.
+  // arrives. The CTAs never fade — until the third screen takes over.
   const textOpacity = useScrollFade(progress, [0.12, 0.3], [1, 0])
+  const exitOpacity = useScrollFade(exit, [0.05, 0.25], [1, 0])
 
   return (
+    // The section covers the whole stage, so once it has faded it has to stop
+    // taking pointer events or it swallows every click on the product list.
     <section
       id="top"
+      style={{ opacity: exitOpacity, pointerEvents: exitOpacity === 0 ? 'none' : undefined }}
       className="absolute inset-0 flex flex-col justify-start px-6 pt-44 sm:justify-end sm:pb-24 sm:pt-0 md:px-9"
     >
       <div className="max-w-full sm:max-w-[min(442px,60vw)] lg:max-w-[442px]">

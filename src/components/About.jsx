@@ -11,10 +11,11 @@ const SERVICES = [
   },
 ]
 
-export default function About({ progress }) {
+export default function About({ progress, exit }) {
   // Fades in only after the first screen's copy is fully gone at 0.3, then
-  // stays for the rest of the scroll — this is the final state.
-  const opacity = useScrollFade(progress, [0.42, 0.55], [0, 1])
+  // holds until the third screen clears the stage for the product list.
+  const opacity =
+    useScrollFade(progress, [0.42, 0.55], [0, 1]) * useScrollFade(exit, [0.05, 0.28], [1, 0])
 
   return (
     <section
