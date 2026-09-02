@@ -38,10 +38,10 @@ function App() {
   const goToStop = useScrollAutoAdvance(stageRef, STAGE_STOPS)
 
   return (
-    // Black underneath everything: the site so far is a white panel laid on
-    // top of it, and the last screen slides that panel up off its own rounded
-    // bottom edge to show what was always behind.
-    <div className="bg-ink">
+    // The whole site sits on one light ground. The screens so far are a panel
+    // laid on top of it, and the last screen slides that panel up off its own
+    // rounded bottom edge to show the contact screen that was always behind.
+    <div className="bg-canvas">
       <Header onContact={() => goToStop.current?.(CONTACT_STOP)} />
       <SocialRail exit={sceneB} />
       <ContactScreen progress={sceneC} />
@@ -65,6 +65,7 @@ function App() {
         mainPhase={mainPhase}
         turnPhase={sceneC}
         phaseA={sceneA}
+        phaseB={sceneB}
       />
     </div>
   )
