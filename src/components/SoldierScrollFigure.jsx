@@ -1,6 +1,8 @@
+import { figureBox, laneLimit } from './heroLayout'
 import useFrameSequence from './useFrameSequence'
 import useFrameSet from './useFrameSet'
 import useScrollFade from './useScrollFade'
+import useViewport from './useViewport'
 
 // The soldier isn't the same height in every pose — arms out he measures 435px
 // of the 494px frame, mid-clip 475 — so at a constant frame height he would
@@ -14,9 +16,8 @@ const HEIGHTS = {
 // the same on every screen and across the handover between the two clips.
 const BASE_HEIGHT = HEIGHTS.main[0]
 
-// Where he stands, in vw from centre. He holds the middle across screens 1 and
-// 2, then steps aside on screen 3 so the product list has the room, and keeps
-// that spot while he turns on the contact screen.
+// The step he takes on the third screen, in vw, so the product list gets the
+// room. Clamped to whatever is actually left between him and the window edge.
 const LANE_3 = 10
 
 // Softens both ends of the move so it doesn't start or stop on a corner.
@@ -49,9 +50,13 @@ export default function SoldierScrollFigure({ mainPhase, turnPhase, phaseA, phas
   const clip = onTurn ? turn : main
   const scale = heightScale(onTurn ? HEIGHTS.turn : HEIGHTS.main, clip.frame / (frames.count - 1))
 
+  const { w: vw, h: vh } = useViewport()
+  const box = figureBox(vw, vh)
+
   // He finishes the second screen's move and only then walks out of centre, so
   // the step reads as part of the animation rather than a slide.
   const lane = easeInOut(useScrollFade(phaseB, [0.25, 0.9], [0, 1])) * LANE_3
+  const shift = Math.min((lane / 100) * vw, laneLimit(box, vw))
 
   return (
     // Its own layer above the panel: the panel slides up behind him on the last
@@ -59,15 +64,15 @@ export default function SoldierScrollFigure({ mainPhase, turnPhase, phaseA, phas
     // figure, not a handover between two.
     <div className="pointer-events-none fixed inset-0 z-20">
       <div
-        style={{ '--lane': `${lane}vw` }}
-        className="absolute inset-x-0 bottom-0 flex h-[min(38%,55vw)] justify-center sm:h-[min(54%,37vw)] sm:justify-end lg:h-[min(66.67%,45vw)] lg:justify-center lg:[transform:translateX(var(--lane))]"
+        className="absolute"
+        style={{ left: box.left + shift, top: box.top, width: box.width, height: box.height }}
       >
-        <div style={{ transform: `scale(${scale})` }} className="relative h-full origin-bottom">
+        <div style={{ transform: `scale(${scale})` }} className="h-full w-full origin-bottom">
           <img
             src={clip.src}
             alt="ATMARAKSI VR training soldier"
             decoding="sync"
-            className="h-full w-auto max-w-none select-none object-contain"
+            className="h-full w-full select-none object-contain"
             draggable={false}
           />
         </div>

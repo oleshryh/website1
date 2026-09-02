@@ -1,4 +1,6 @@
+import { copyColumn, copySlot, CTA_SPACER } from './heroLayout'
 import useScrollFade from './useScrollFade'
+import useViewport from './useViewport'
 
 const SERVICES = [
   {
@@ -12,6 +14,7 @@ const SERVICES = [
 ]
 
 export default function About({ progress, exit }) {
+  const { w: vw, h: vh } = useViewport()
   // Fades in only after the first screen's copy is fully gone at 0.3, then
   // holds until the third screen clears the stage for the product list.
   const opacity =
@@ -23,30 +26,35 @@ export default function About({ progress, exit }) {
       style={{ opacity }}
       className="pointer-events-none absolute inset-0"
     >
-      <div className="absolute left-6 right-6 top-[45.3%] md:left-9 md:right-9">
-        <h2 className="mb-3 max-w-[497px] text-[17px] font-medium leading-[21px] sm:mb-4 sm:text-[19px] sm:leading-[23px] lg:text-[22px] lg:leading-[27px]">
-          We develop next-generation <span className="text-muted">VR training systems</span>
-          <br className="hidden lg:inline" />{' '}
-          and electronic solutions for mission readiness.
-        </h2>
-        <p className="max-w-[333px] text-[13px] font-light leading-[17px] text-muted sm:text-[14px] sm:leading-[18px] lg:text-[16px] lg:leading-[19px]">
-          Combining software, simulation technologies,
-          <br className="hidden lg:inline" />{' '}
-          and custom hardware, we create realistic
-          <br className="hidden lg:inline" />{' '}
-          training environments for developing skills and
-          <br className="hidden lg:inline" />{' '}
-          preparing specialists for real-world scenarios.
-        </p>
+      {/* The same slot the first screen writes into, so this copy takes its
+          place rather than landing somewhere else on the screen — and the
+          buttons underneath stay clear of it. */}
+      <div className="absolute" style={copySlot(vw, vh)}>
+        <div style={copyColumn(vw, vh)}>
+          <h2 className="mb-3 text-[17px] font-medium leading-[21px] sm:mb-4 sm:text-[19px] sm:leading-[23px] lg:text-[22px] lg:leading-[27px]">
+            We develop next-generation <span className="text-muted">VR training systems</span>{' '}
+            and electronic solutions for mission readiness.
+          </h2>
+          <p className="text-[13px] font-light leading-[17px] text-muted sm:text-[14px] sm:leading-[18px] lg:text-[16px] lg:leading-[19px]">
+            Combining software, simulation technologies, and custom hardware, we create
+            realistic training environments for developing skills and preparing specialists
+            for real-world scenarios.
+          </p>
+          <div aria-hidden="true" className={CTA_SPACER} />
+        </div>
       </div>
 
-      <div className="absolute right-9 top-[71.4%] hidden space-y-6 text-right lg:block">
+      {/* Top right, the one corner the figure never reaches — beside his knee
+          they were simply behind him at most window sizes. */}
+      <div className="absolute right-6 top-[19%] hidden w-[min(430px,44vw)] space-y-5 text-right md:right-9 lg:block">
         {SERVICES.map(({ title, lines }) => (
           <div key={title}>
-            <h3 className="text-[16px] font-medium uppercase leading-[19px]">{title}</h3>
-            <p className="text-[16px] font-light leading-[19px] text-muted">
+            <h3 className="text-[14px] font-medium uppercase leading-[18px] xl:text-[16px] xl:leading-[19px]">
+              {title}
+            </h3>
+            <p className="text-[14px] font-light leading-[18px] text-muted xl:text-[16px] xl:leading-[19px]">
               {lines[0]}
-              <br className="hidden lg:inline" />{' '}
+              <br className="hidden xl:inline" />{' '}
               {lines[1]}
             </p>
           </div>
