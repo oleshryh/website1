@@ -1,12 +1,21 @@
 import { useRef } from 'react'
 import { useScroll } from 'framer-motion'
 import About from './components/About'
+import ContactScreen from './components/ContactScreen'
 import Header from './components/Header'
 import Hero, { HeroCallouts } from './components/Hero'
 import Products from './components/Products'
 import SocialRail from './components/SocialRail'
 import SoldierScrollFigure from './components/SoldierScrollFigure'
-import { SCENE_SPLIT, STAGE_STOPS, STAGE_VH } from './components/stage'
+import {
+  CLIP_HANDOVER,
+  CONTACT_STOP,
+  PANEL_VH,
+  SCREEN_2,
+  SCREEN_3,
+  STAGE_STOPS,
+  STAGE_VH,
+} from './components/stage'
 import useScrollAutoAdvance from './components/useScrollAutoAdvance'
 import useSegmentProgress from './components/useSegmentProgress'
 
@@ -17,27 +26,45 @@ function App() {
     offset: ['start start', 'end end'],
   })
 
-  // Screens 1-2 read their own 0..1, so every threshold in Hero, HeroCallouts
-  // and About means what it did when the stage was only those two screens.
-  const sceneA = useSegmentProgress(scrollYProgress, [0, SCENE_SPLIT])
-  const sceneB = useSegmentProgress(scrollYProgress, [SCENE_SPLIT, 1])
+  // Each screen reads its own 0..1, so its thresholds mean what they did when
+  // it was the only thing on the stage.
+  const sceneA = useSegmentProgress(scrollYProgress, [0, SCREEN_2])
+  const sceneB = useSegmentProgress(scrollYProgress, [SCREEN_2, SCREEN_3])
+  const sceneC = useSegmentProgress(scrollYProgress, [SCREEN_3, 1])
+  // The figure's two clips each run across their own stretch of the page.
+  const mainPhase = useSegmentProgress(scrollYProgress, [0, CLIP_HANDOVER])
 
-  useScrollAutoAdvance(stageRef, STAGE_STOPS)
+  const goToStop = useScrollAutoAdvance(stageRef, STAGE_STOPS)
 
   return (
-    <div className="bg-canvas">
-      <Header />
+    // Black underneath everything: the site so far is a white panel laid on
+    // top of it, and the last screen slides that panel up off its own rounded
+    // bottom edge to show what was always behind.
+    <div className="bg-ink">
+      <Header onContact={() => goToStop.current?.(CONTACT_STOP)} />
       <SocialRail exit={sceneB} />
+      <ContactScreen progress={sceneC} />
 
-      <div ref={stageRef} className="relative" style={{ height: `${STAGE_VH}vh` }}>
-        <div className="sticky top-0 h-screen w-full overflow-hidden">
-          <HeroCallouts progress={sceneA} />
-          <SoldierScrollFigure progress={scrollYProgress} phaseB={sceneB} />
-          <Hero progress={sceneA} exit={sceneB} />
-          <About progress={sceneA} exit={sceneB} />
-          <Products progress={sceneB} />
+      {/* The stage is the scroll driver; the panel column inside it is shorter
+          by exactly one viewport, which is the room the panel needs to slide up
+          and off the screen at the end. */}
+      <div ref={stageRef} className="relative z-10" style={{ height: `${STAGE_VH}vh` }}>
+        <div style={{ height: `${PANEL_VH}vh` }}>
+          <div className="sticky top-0 h-screen w-full overflow-hidden rounded-b-[28px] bg-canvas lg:rounded-b-[44px]">
+            <HeroCallouts progress={sceneA} />
+            <Hero progress={sceneA} exit={sceneB} />
+            <About progress={sceneA} exit={sceneB} />
+            <Products progress={sceneB} />
+          </div>
         </div>
       </div>
+
+      <SoldierScrollFigure
+        mainPhase={mainPhase}
+        turnPhase={sceneC}
+        phaseA={sceneA}
+        phaseB={sceneB}
+      />
     </div>
   )
 }
