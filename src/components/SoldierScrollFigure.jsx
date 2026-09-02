@@ -1,26 +1,19 @@
 import { useRef } from 'react'
 import useFrameSequence from './useFrameSequence'
+import useFrameSet from './useFrameSet'
 import useScrollFade from './useScrollFade'
-import { FRAME_COUNT } from './stage'
 
 // The soldier isn't the same height in every pose — arms out he measures 435px
 // of the 494px frame, mid-clip 475 — so at a constant frame height he would
 // visibly grow as the page scrolls. Sampled every ten frames from the alpha
 // bounds of each set; re-measure if the frames are regenerated.
-const HEIGHT_STEP = 10
-const CLIPS = {
-  main: {
-    dir: '/frames',
-    heights: [435, 436, 435, 444, 454, 466, 473, 473, 471, 468, 464, 461, 460],
-  },
-  turn: {
-    dir: '/frames-turn',
-    heights: [460, 458, 460, 462, 464, 465, 466, 466, 464, 466, 466, 467, 467],
-  },
+const HEIGHTS = {
+  main: [435, 436, 435, 444, 454, 466, 473, 473, 471, 468, 464, 461, 460],
+  turn: [460, 458, 460, 462, 464, 465, 466, 466, 464, 466, 466, 467, 467],
 }
 // Everything is measured against the opening pose, so his apparent height is
 // the same on every screen and across the handover between the two clips.
-const BASE_HEIGHT = CLIPS.main.heights[0]
+const BASE_HEIGHT = HEIGHTS.main[0]
 
 // Where he stands on each screen, in vw from centre. He drifts right as the
 // copy needs the room: clear of the second screen's headline, then off to the
@@ -31,14 +24,18 @@ const LANE_3 = 28
 // Softens both ends of a move so it doesn't start or stop on a corner.
 const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2)
 
-function heightScale(heights, frame) {
-  const i = Math.min(heights.length - 2, Math.floor(frame / HEIGHT_STEP))
-  const t = Math.min(1, (frame - i * HEIGHT_STEP) / HEIGHT_STEP)
+// Takes how far along the clip we are rather than a frame number, so it reads
+// the same curve whichever set is loaded — the light set has half the frames.
+function heightScale(heights, position) {
+  const span = (heights.length - 1) * Math.min(1, Math.max(0, position))
+  const i = Math.min(heights.length - 2, Math.floor(span))
+  const t = span - i
   return BASE_HEIGHT / (heights[i] + (heights[i + 1] - heights[i]) * t)
 }
 
 export default function SoldierScrollFigure({ mainPhase, turnPhase, phaseA, phaseB }) {
   const blendRef = useRef(null)
+  const frames = useFrameSet()
 
   // Clip 2 is another 4MB, so it only starts loading once the first screen is
   // behind us rather than competing with the initial paint.
@@ -46,19 +43,19 @@ export default function SoldierScrollFigure({ mainPhase, turnPhase, phaseA, phas
   const onTurn = useScrollFade(turnPhase, [0, 0.001], [0, 1]) > 0
 
   const main = useFrameSequence(mainPhase, {
-    dir: CLIPS.main.dir,
-    count: FRAME_COUNT,
+    dir: frames.main,
+    count: frames.count,
     blendRef: onTurn ? null : blendRef,
   })
   const turn = useFrameSequence(turnPhase, {
-    dir: CLIPS.turn.dir,
-    count: FRAME_COUNT,
+    dir: frames.turn,
+    count: frames.count,
     blendRef: onTurn ? blendRef : null,
     preload: turnReady,
   })
 
   const clip = onTurn ? turn : main
-  const scale = heightScale(onTurn ? CLIPS.turn.heights : CLIPS.main.heights, clip.frame)
+  const scale = heightScale(onTurn ? HEIGHTS.turn : HEIGHTS.main, clip.frame / (frames.count - 1))
 
   // He finishes each move and only then walks further out of centre, so the
   // two overlap into one drift instead of sliding a still figure sideways.

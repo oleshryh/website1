@@ -5,6 +5,7 @@ import ContactScreen from './components/ContactScreen'
 import Header from './components/Header'
 import Hero, { HeroCallouts } from './components/Hero'
 import Products from './components/Products'
+import Reticle from './components/Reticle'
 import SocialRail from './components/SocialRail'
 import SoldierScrollFigure from './components/SoldierScrollFigure'
 import {
@@ -44,13 +45,14 @@ function App() {
       <Header onContact={() => goToStop.current?.(CONTACT_STOP)} />
       <SocialRail exit={sceneB} />
       <ContactScreen progress={sceneC} />
+      <Reticle />
 
       {/* The stage is the scroll driver; the panel column inside it is shorter
           by exactly one viewport, which is the room the panel needs to slide up
           and off the screen at the end. */}
-      <div ref={stageRef} className="relative z-10" style={{ height: `${STAGE_VH}vh` }}>
-        <div style={{ height: `${PANEL_VH}vh` }}>
-          <div className="sticky top-0 h-screen w-full overflow-hidden rounded-b-[28px] bg-canvas lg:rounded-b-[44px]">
+      <div ref={stageRef} className="relative z-10" style={{ height: `${STAGE_VH}svh` }}>
+        <div style={{ height: `${PANEL_VH}svh` }}>
+          <div className="sticky top-0 h-[100svh] w-full overflow-hidden rounded-b-[28px] bg-canvas lg:rounded-b-[44px]">
             <HeroCallouts progress={sceneA} />
             <Hero progress={sceneA} exit={sceneB} onContact={() => goToStop.current?.(CONTACT_STOP)} />
             <About progress={sceneA} exit={sceneB} />

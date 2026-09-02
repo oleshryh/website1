@@ -57,7 +57,7 @@ export default function ContactScreen({ progress }) {
       id="contact"
       aria-label="Contact"
       style={{ pointerEvents: live ? 'auto' : 'none' }}
-      className="fixed inset-0 z-0 flex items-center bg-ink px-6 md:px-9"
+      className="fixed inset-0 z-0 flex items-start bg-ink px-6 pt-20 md:px-9 lg:items-center lg:pt-0"
     >
       <div
         style={{ opacity, transform: `translateY(${lift}px)` }}
@@ -66,7 +66,7 @@ export default function ContactScreen({ progress }) {
         <p className="mb-2 text-[11px] font-normal uppercase tracking-[0.16em] text-white/40">
           Contact
         </p>
-        <h2 className="mb-8 max-w-[440px] text-[20px] font-medium leading-[1.25] text-white sm:text-[23px] lg:mb-10 lg:text-[26px]">
+        <h2 className="mb-6 max-w-[440px] text-[20px] font-medium leading-[1.25] text-white sm:text-[23px] lg:mb-10 lg:text-[26px]">
           Tell us what you train for,{' '}
           <span className="font-light text-white/45">we'll build the system</span>.
         </h2>
@@ -80,7 +80,7 @@ export default function ContactScreen({ progress }) {
           </div>
         ) : (
           <form onSubmit={onSubmit} noValidate={false}>
-            <div className="grid gap-6 sm:grid-cols-2">
+            <div className="grid gap-5 sm:grid-cols-2 sm:gap-6">
               {FIELDS.map((field) => (
                 <Field key={field.name} {...field} />
               ))}
@@ -102,7 +102,7 @@ export default function ContactScreen({ progress }) {
               </p>
             )}
 
-            <PillButton as="button" type="submit" variant="light" disabled={state === 'sending'} className="mt-9">
+            <PillButton as="button" type="submit" variant="light" disabled={state === 'sending'} className="mt-7 lg:mt-9">
               {state === 'sending' ? 'Sending' : 'Send Request'}
             </PillButton>
           </form>
