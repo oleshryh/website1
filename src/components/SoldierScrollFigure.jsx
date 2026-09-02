@@ -1,62 +1,79 @@
-import { useEffect } from 'react'
-import { motion, useTransform } from 'framer-motion'
+import { useRef } from 'react'
 import useFrameSequence from './useFrameSequence'
 import useScrollFade from './useScrollFade'
+import { FRAME_COUNT } from './stage'
 
-const FRAME_COUNT = 102
-// Both sequences are keyed onto the same canvas, and the turn's first frame is
-// the pose the first sequence ends on, so the handover is invisible.
-const MAIN_DIR = '/frames'
-const TURN_DIR = '/frames-turn'
+const FRAMES_DIR = '/frames'
+// /frames-turn holds the profile turn, kept for the fourth screen.
 
-// Where the figure parks on the third screen. He keeps his full size — the
-// list fits beside him without it. The travel is measured against the visible
-// body, not the frame: in the closing profile the silhouette only covers
-// 28%-72% of the canvas width, the rest is transparent padding.
-const PARKED_X = 26
+// The soldier isn't the same height in every pose — arms out he measures 435px
+// of the 494px frame, mid-clip 475 — so at a constant frame height he would
+// visibly grow as the page scrolls. Sampled every ten frames from the alpha
+// bounds of the set in /frames; re-measure if those frames are regenerated.
+const FIGURE_HEIGHTS = [435, 436, 435, 444, 454, 466, 473, 473, 471, 468, 464, 461, 460]
+const HEIGHT_STEP = 10
+const BASE_HEIGHT = FIGURE_HEIGHTS[0]
 
-export default function SoldierScrollFigure({ phaseA, phaseB }) {
-  // Dip slightly smaller through the middle of the scroll and settle back to
-  // full size at the first and last frame, to smooth over the fact that not
-  // every pose fills the stabilized canvas by quite the same amount.
-  const scale = useTransform(phaseA, [0, 0.5, 1], [1, 0.93, 1])
+// Where he parks on the third screen: to the right, leaving the stage to the
+// product list. Measured against the visible body, not the frame — standing
+// square he covers 25%-75% of the canvas width, the rest is transparent.
+const PARKED_X = 28
 
-  // The turn's frames are another 3.8MB, so they only start loading once the
-  // first screen is behind us rather than competing with the initial paint.
-  const turnReady = useScrollFade(phaseA, [0.5, 0.55], [0, 1]) > 0
-  const started = useScrollFade(phaseB, [0, 0.001], [0, 1]) > 0
+// Softens both ends of the slide so it doesn't start or stop on a corner.
+const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2)
 
-  // The seam frame is the one that must never be missing: it goes up the
-  // instant the third screen starts, which can be before the deferred preload
-  // of the rest of the turn has finished.
-  useEffect(() => {
-    const seam = new Image()
-    seam.src = `${TURN_DIR}/frame-000.webp`
-  }, [])
+// Keeps the soldier the same height throughout by cancelling the pose's own
+// height, interpolating between the sampled frames.
+function heightScale(frame) {
+  const i = Math.min(FIGURE_HEIGHTS.length - 2, Math.floor(frame / HEIGHT_STEP))
+  const t = Math.min(1, (frame - i * HEIGHT_STEP) / HEIGHT_STEP)
+  const height = FIGURE_HEIGHTS[i] + (FIGURE_HEIGHTS[i + 1] - FIGURE_HEIGHTS[i]) * t
+  return BASE_HEIGHT / height
+}
 
-  const mainSrc = useFrameSequence(phaseA, { dir: MAIN_DIR, count: FRAME_COUNT })
-  const turnSrc = useFrameSequence(phaseB, { dir: TURN_DIR, count: FRAME_COUNT, preload: turnReady })
+export default function SoldierScrollFigure({ progress, phaseB }) {
+  const blendRef = useRef(null)
 
-  // He turns first and only then walks out of centre, so the two moves overlap
+  // One clip across the whole stage rather than one per screen: the split is
+  // placed so the frames advance at the same rate either side of it, which
+  // makes the scroll position and the pose the same thing all the way down.
+  const { frame, baseSrc, nextSrc } = useFrameSequence(progress, {
+    dir: FRAMES_DIR,
+    count: FRAME_COUNT,
+    blendRef,
+  })
+
+  // He finishes the move and only then walks out of centre, so the two overlap
   // into one gesture instead of sliding a still figure sideways.
-  const x = useScrollFade(phaseB, [0.25, 0.9], [0, PARKED_X])
+  const x = easeInOut(useScrollFade(phaseB, [0.25, 0.9], [0, 1])) * PARKED_X
+  const scale = heightScale(frame)
 
   return (
     // The wrapper owns the placement so it can stay centred on wide screens but
-    // tuck against the right edge once the copy needs the room. Its own
-    // transform carries the third screen's move; the img keeps the per-pose
-    // scale dip, so the two never fight over one property.
+    // tuck against the right edge once the copy needs the room.
     <div
       style={{ '--turn-x': `${x}vw` }}
       className="pointer-events-none absolute inset-x-0 bottom-0 flex h-[min(38%,55vw)] justify-center sm:h-[min(54%,37vw)] sm:justify-end lg:h-[min(66.67%,45vw)] lg:justify-center lg:[transform:translateX(var(--turn-x))]"
     >
-      <motion.img
-        src={started ? turnSrc : mainSrc}
-        alt="ATMARAKSI VR training soldier"
-        style={{ scale }}
-        className="h-full w-auto max-w-none origin-bottom select-none object-contain"
-        draggable={false}
-      />
+      <div style={{ transform: `scale(${scale})` }} className="relative h-full origin-bottom">
+        <img
+          src={baseSrc}
+          alt="ATMARAKSI VR training soldier"
+          decoding="sync"
+          className="h-full w-auto max-w-none select-none object-contain"
+          draggable={false}
+        />
+        <img
+          ref={blendRef}
+          src={nextSrc}
+          alt=""
+          aria-hidden="true"
+          decoding="sync"
+          style={{ opacity: 0 }}
+          className="absolute inset-y-0 left-0 h-full w-auto max-w-none select-none object-contain"
+          draggable={false}
+        />
+      </div>
     </div>
   )
 }

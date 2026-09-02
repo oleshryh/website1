@@ -1,10 +1,10 @@
 import { execFileSync } from 'node:child_process'
-import { mkdirSync, readdirSync, rmSync } from 'node:fs'
+import { existsSync, mkdirSync, readdirSync, rmSync } from 'node:fs'
 import { basename, join } from 'node:path'
 import ffmpegPath from 'ffmpeg-static'
 import sharp from 'sharp'
 
-// node scripts/process-video.mjs [video] [outDir] [--canvas WxH]
+// node scripts/process-video.mjs [video] [outDir] [--canvas WxH] [--step N] [--width N]
 // The canvas override exists so a second clip can be keyed onto the *first*
 // clip's canvas geometry. Both sets then render at identical dimensions, and a
 // sequence can hand over to the next one mid-scroll without the figure
@@ -15,6 +15,14 @@ const VIDEO = videoArg ?? 'media/video1.mp4'
 const OUT_DIR = outDirArg ?? 'public/frames'
 const RAW_DIR = join('.frame-cache', `raw-${basename(OUT_DIR)}`)
 
+const flagValue = (name) => {
+  const at = flags.indexOf(name)
+  return at === -1 ? null : flags[at + 1]
+}
+
+// Keep every Nth frame — the lighter sets small screens load.
+const STEP = Number(flagValue('--step') ?? 1)
+
 const canvasFlag = flags.indexOf('--canvas')
 const CANVAS_OVERRIDE =
   canvasFlag === -1
@@ -24,23 +32,34 @@ const CANVAS_OVERRIDE =
         if (!match) throw new Error('--canvas expects WxH, e.g. --canvas 765x472')
         return { width: Number(match[1]), height: Number(match[2]) }
       })()
-const EXTRACT_FPS = 20
-const OUT_WIDTH = 800
+const OUT_WIDTH = Number(flagValue('--width') ?? 800)
 // Pixels at/above this "whiteness" are fully transparent; below WHITE_FLOOR fully opaque; feathered in between.
 const WHITE_CEIL = 232
 const WHITE_FLOOR = 188
 // Fraction of the widest/tallest frame added back as breathing room around the canvas.
 const CANVAS_PADDING = 0.04
 
+// Validate before destroying: the out dir is wiped below, so a mistyped or
+// mis-split argument list would otherwise take the existing frames with it.
+if (!existsSync(VIDEO)) throw new Error(`No such video: ${VIDEO}`)
+if (!Number.isInteger(STEP) || STEP < 1) throw new Error(`--step expects a positive integer, got ${STEP}`)
+if (!Number.isInteger(OUT_WIDTH) || OUT_WIDTH < 1) throw new Error(`--width expects a positive integer, got ${OUT_WIDTH}`)
+
 rmSync(RAW_DIR, { recursive: true, force: true })
 rmSync(OUT_DIR, { recursive: true, force: true })
 mkdirSync(RAW_DIR, { recursive: true })
 mkdirSync(OUT_DIR, { recursive: true })
 
-execFileSync(ffmpegPath, ['-y', '-i', VIDEO, '-vf', `fps=${EXTRACT_FPS}`, join(RAW_DIR, 'frame-%03d.png')], { stdio: 'inherit' })
+// passthrough keeps the clip's own frames. Resampling to a round number
+// instead (fps=20 off 24fps footage) drops frames on an uneven cadence, and the
+// scrubbed animation inherits that unevenness as judder.
+execFileSync(ffmpegPath, ['-y', '-i', VIDEO, '-fps_mode', 'passthrough', join(RAW_DIR, 'frame-%03d.png')], { stdio: 'inherit' })
 
-const files = readdirSync(RAW_DIR).filter((f) => f.endsWith('.png')).sort()
-console.log(`Extracted ${files.length} raw frames, keying out white background...`)
+const extracted = readdirSync(RAW_DIR).filter((f) => f.endsWith('.png')).sort()
+const files = extracted.filter((_, i) => i % STEP === 0)
+console.log(
+  `Extracted ${extracted.length} raw frames, keeping ${files.length}${STEP > 1 ? ` (every ${STEP})` : ''}, keying out white...`,
+)
 
 const buffers = []
 const perFrameBounds = []
