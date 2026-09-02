@@ -65,7 +65,6 @@ function App() {
         mainPhase={mainPhase}
         turnPhase={sceneC}
         phaseA={sceneA}
-        phaseB={sceneB}
       />
     </div>
   )

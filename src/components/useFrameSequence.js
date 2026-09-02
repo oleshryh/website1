@@ -8,14 +8,13 @@ import { useMotionValueEvent } from 'framer-motion'
 // computes inside its own frame loop can arrive stale, while the event path
 // fires with the scroll.
 //
-// The integer frame goes through React state, but the fraction between two
-// frames is written straight to a ref'd element's opacity. Crossfading the next
-// frame over the current one turns a flipbook into continuous motion, and doing
-// it outside React keeps that from costing a render on every hundredth of a
-// frame.
-export default function useFrameSequence(progress, { dir, count, blendRef, preload = true }) {
-  const toIndex = (p) => Math.min(count - 1, Math.max(0, p * (count - 1)))
-  const [frame, setFrame] = useState(() => Math.floor(toIndex(progress.get())))
+// Exactly one frame is on screen at a time. An earlier version crossfaded the
+// next frame over the current one to smooth the flipbook, but the two images
+// were updated through different paths — one through React, one straight to
+// the DOM — so a fast scroll could leave two different poses visible at once.
+export default function useFrameSequence(progress, { dir, count, preload = true }) {
+  const toIndex = (p) => Math.min(count - 1, Math.max(0, Math.round(p * (count - 1))))
+  const [frame, setFrame] = useState(() => toIndex(progress.get()))
 
   useEffect(() => {
     if (!preload) return
@@ -28,17 +27,10 @@ export default function useFrameSequence(progress, { dir, count, blendRef, prelo
 
   useMotionValueEvent(progress, 'change', (p) => {
     const index = toIndex(p)
-    const base = Math.floor(index)
-
-    if (blendRef?.current) blendRef.current.style.opacity = String(index - base)
-    setFrame((current) => (current === base ? current : base))
+    setFrame((current) => (current === index ? current : index))
   })
 
-  return {
-    frame,
-    baseSrc: frameSrc(dir, frame),
-    nextSrc: frameSrc(dir, Math.min(count - 1, frame + 1)),
-  }
+  return { frame, src: frameSrc(dir, frame) }
 }
 
 function frameSrc(dir, i) {
