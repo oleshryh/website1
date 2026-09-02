@@ -22,30 +22,38 @@ const GAP = 20
 const PHONE = 768
 export const stacked = (vw, vh) => vw < PHONE || vh > vw
 
-// Bottom-anchored, and on a phone centred with the copy above it. Everywhere
-// else the soldier fills the corridor to the right of the copy — as tall as the
-// window allows, never wider than the corridor.
+// Bottom-anchored, and centred wherever centring still clears the copy — which
+// is the layout the site was drawn for. Narrower windows are the exception, not
+// the rule.
 export function figureBox(vw, vh) {
   if (stacked(vw, vh)) {
     const height = Math.min(vh * 0.4, vw * 0.78)
     const width = height * FIGURE_ASPECT
-    return { width, height, left: (vw - width) / 2, top: vh - height }
+    return { width, height, left: (vw - width) / 2, top: vh - height, centred: true }
   }
+
+  // The arrangement the site is designed around: two thirds of the window tall,
+  // standing in the middle. Wherever it fits, it is what you get.
+  let height = Math.min((vh * 2) / 3, vw * 0.45)
+  let width = height * FIGURE_ASPECT
+  let left = (vw - width) / 2
 
   const from = copyRight(vw) + GAP
-  const room = vw - GAP - from
-  let width = room / (BODY_RIGHT - BODY_LEFT)
-  let height = width / FIGURE_ASPECT
-
-  const cap = vh * 0.62
-  if (height > cap) {
-    height = cap
-    width = height * FIGURE_ASPECT
+  if (left + width * BODY_LEFT >= from) {
+    return { width, height, left, top: vh - height, centred: true }
   }
 
+  // Only when centring would put his shoulder on the headline does he give
+  // ground: he steps into the corridor beside the copy, and shrinks only if
+  // even that is too narrow for him.
+  const room = vw - GAP - from
+  if (width * (BODY_RIGHT - BODY_LEFT) > room) {
+    width = room / (BODY_RIGHT - BODY_LEFT)
+    height = width / FIGURE_ASPECT
+  }
   const body = width * (BODY_RIGHT - BODY_LEFT)
-  const left = from + (room - body) / 2 - width * BODY_LEFT
-  return { width, height, left, top: vh - height }
+  left = from + (room - body) / 2 - width * BODY_LEFT
+  return { width, height, left, top: vh - height, centred: false }
 }
 
 // How far right he can still step on the third screen before his shoulder

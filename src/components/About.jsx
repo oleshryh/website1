@@ -1,4 +1,4 @@
-import { copyColumn, copySlot, CTA_SPACER } from './heroLayout'
+import { copyColumn, copySlot, CTA_SPACER, figureBox } from './heroLayout'
 import useScrollFade from './useScrollFade'
 import useViewport from './useViewport'
 
@@ -15,6 +15,7 @@ const SERVICES = [
 
 export default function About({ progress, exit }) {
   const { w: vw, h: vh } = useViewport()
+  const box = figureBox(vw, vh)
   // Fades in only after the first screen's copy is fully gone at 0.3, then
   // holds until the third screen clears the stage for the product list.
   const opacity =
@@ -44,9 +45,12 @@ export default function About({ progress, exit }) {
         </div>
       </div>
 
-      {/* Top right, the one corner the figure never reaches — beside his knee
-          they were simply behind him at most window sizes. */}
-      <div className="absolute right-6 top-[19%] hidden w-[min(430px,44vw)] space-y-5 text-right md:right-9 lg:block">
+      {/* Beside him on the right, and above his head instead in a window too
+          narrow for him to stand in the middle. */}
+      <div
+        style={box.centred ? { top: '71.4%' } : { top: '19%' }}
+        className="absolute right-6 hidden w-[min(430px,44vw)] space-y-5 text-right md:right-9 lg:block"
+      >
         {SERVICES.map(({ title, lines }) => (
           <div key={title}>
             <h3 className="text-[14px] font-medium uppercase leading-[18px] xl:text-[16px] xl:leading-[19px]">

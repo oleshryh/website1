@@ -145,6 +145,7 @@ export function HeroCallouts({ progress }) {
 
 export default function Hero({ progress, exit, onContact }) {
   const { w: vw, h: vh } = useViewport()
+  const box = figureBox(vw, vh)
   // Headline block and quote fade together, well before the second screen
   // arrives. The CTAs never fade — until the third screen takes over.
   const textOpacity = useScrollFade(progress, [0.12, 0.3], [1, 0])
@@ -174,11 +175,15 @@ export default function Hero({ progress, exit, onContact }) {
         </div>
       </div>
 
-      {/* Above the figure's head rather than beside his knee: wherever he
-          stands, the top right corner of the window is empty. */}
+      {/* Bottom right, beside him — except in a window too narrow for him to
+          stand in the middle, where that corner is where he ends up. */}
       <blockquote
-        style={{ opacity: textOpacity }}
-        className="pointer-events-none absolute right-6 top-[22%] hidden w-[310px] text-right text-[15px] font-light leading-[1.45] text-ink/70 md:right-9 lg:block xl:text-[16px]"
+        style={{
+          opacity: textOpacity,
+          top: box.centred ? 'auto' : '22%',
+          bottom: box.centred ? 96 : 'auto',
+        }}
+        className="pointer-events-none absolute right-6 hidden w-[310px] text-right text-[15px] font-light leading-[1.45] text-ink/70 md:right-9 lg:block xl:text-[16px]"
       >
         "The future of professional training begins with technology that transforms
         virtual scenarios into real experience."
