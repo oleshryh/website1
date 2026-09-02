@@ -44,7 +44,7 @@ function LanguageSwitcher() {
   const [lang, setLang] = useState('EN')
 
   return (
-    <div className="hidden h-9 items-center gap-0.5 rounded-[4px] bg-ink/[0.05] p-1 sm:flex">
+    <div className="hidden h-9 items-center gap-0.5 rounded-full bg-ink/[0.05] p-1 sm:flex">
       {LANGUAGES.map((code) => {
         const active = code === lang
         return (
@@ -53,7 +53,7 @@ function LanguageSwitcher() {
             type="button"
             onClick={() => setLang(code)}
             aria-pressed={active}
-            className={`flex h-full items-center rounded-[4px] px-2.5 text-xs transition-colors ${
+            className={`flex h-full items-center rounded-full px-3 text-xs transition-colors ${
               active ? 'bg-white font-medium text-ink shadow-sm' : 'text-ink/40 hover:text-ink/70'
             }`}
           >
@@ -182,7 +182,7 @@ export default function Header({ onContact }) {
               onClick={() => setMenuOpen((open) => !open)}
               aria-expanded={menuOpen}
               aria-label="Menu"
-              className="flex h-9 w-9 items-center justify-center rounded-[4px] text-ink transition-colors hover:bg-ink/[0.06] lg:hidden"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-ink transition-colors hover:bg-ink/[0.06] lg:hidden"
             >
               <MenuIcon open={menuOpen} />
             </button>

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { ArrowRight } from 'lucide-react'
 import DemoModal from './DemoModal'
+import PillButton from './PillButton'
 import useScrollFade from './useScrollFade'
 
 // The figure is bottom-anchored, centred, and two thirds of the viewport tall,
@@ -58,7 +58,7 @@ function Callout({ tipX, tipY, labelLeft, labelTop, labelWidth, title, subtitle 
   )
 }
 
-export function CtaButtons() {
+export function CtaButtons({ onContact }) {
   const [demoOpen, setDemoOpen] = useState(false)
   const [demoOrigin, setDemoOrigin] = useState(null)
   const demoRef = useRef(null)
@@ -71,16 +71,16 @@ export function CtaButtons() {
 
   return (
     <div className="flex flex-wrap items-center gap-6 sm:gap-8 lg:gap-9">
-      <a
+      <PillButton
         href="#contact"
-        className="group flex h-11 items-center gap-2.5 rounded-[4px] bg-ink px-5 text-sm font-medium text-white shadow-sm transition-colors duration-300 hover:bg-ink/80 sm:gap-3 sm:px-6 sm:text-[15px] lg:h-12 lg:px-7 lg:text-base"
+        onClick={(event) => {
+          if (!onContact) return
+          event.preventDefault()
+          onContact()
+        }}
       >
         Contact Us
-        <ArrowRight
-          size={16}
-          className="transition-transform duration-300 group-hover:translate-x-1 lg:h-[18px] lg:w-[18px]"
-        />
-      </a>
+      </PillButton>
       <button
         type="button"
         ref={demoRef}
@@ -145,7 +145,7 @@ export function HeroCallouts({ progress }) {
   )
 }
 
-export default function Hero({ progress, exit }) {
+export default function Hero({ progress, exit, onContact }) {
   // Headline block and quote fade together, well before the second screen
   // arrives. The CTAs never fade — until the third screen takes over.
   const textOpacity = useScrollFade(progress, [0.12, 0.3], [1, 0])
@@ -170,7 +170,7 @@ export default function Hero({ progress, exit }) {
             <span className="text-muted">scenarios</span> and professional skills development.
           </h1>
         </div>
-        <CtaButtons />
+        <CtaButtons onContact={onContact} />
       </div>
 
       <blockquote

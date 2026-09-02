@@ -52,7 +52,7 @@ function App() {
         <div style={{ height: `${PANEL_VH}vh` }}>
           <div className="sticky top-0 h-screen w-full overflow-hidden rounded-b-[28px] bg-canvas lg:rounded-b-[44px]">
             <HeroCallouts progress={sceneA} />
-            <Hero progress={sceneA} exit={sceneB} />
+            <Hero progress={sceneA} exit={sceneB} onContact={() => goToStop.current?.(CONTACT_STOP)} />
             <About progress={sceneA} exit={sceneB} />
             <Products progress={sceneB} />
           </div>

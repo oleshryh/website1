@@ -90,7 +90,7 @@ export default function DemoModal({ open, origin, onClose }) {
           type="button"
           onClick={onClose}
           aria-label="Close demo"
-          className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-[4px] bg-white/85 text-ink backdrop-blur transition-colors hover:bg-white"
+          className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/85 text-ink backdrop-blur transition-colors hover:bg-white"
         >
           <CloseIcon width={16} height={16} />
         </button>
