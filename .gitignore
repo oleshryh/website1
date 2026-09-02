@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Generated frame cache (intermediate PNGs, safe to delete)
+.frame-cache
+
+# Personal Claude Code settings (permissions differ per machine)
+.claude/settings.local.json
