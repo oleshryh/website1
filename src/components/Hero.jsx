@@ -65,7 +65,7 @@ export function CtaButtons({ onContact }) {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-6 sm:gap-8 lg:gap-9">
+    <div className="flex flex-wrap items-center gap-6 sm:gap-8">
       <PillButton
         href="#contact"
         onClick={(event) => {
@@ -116,11 +116,11 @@ export function HeroCallouts({ progress }) {
   const box = figureBox(vw, vh)
 
   return (
-    // Only from xl up: below that the figure reaches close enough to the right
-    // edge that the lines would have nowhere to run.
+    // Not on a phone: the lines need room to the right of him that a small
+    // screen does not have.
     <div
       style={{ opacity }}
-      className="pointer-events-none absolute inset-0 hidden xl:block"
+      className="pointer-events-none absolute inset-0 hidden lg:block"
     >
       {CALLOUTS.map(({ tip, ...rest }) => {
         const tipX = box.left + tip.fx * box.width
