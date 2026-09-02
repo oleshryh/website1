@@ -12,10 +12,10 @@ import { useEffect, useRef } from 'react'
 // Timed by distance rather than a flat duration: the screens aren't equal
 // lengths, and the figure's animation is tied to scroll position, so a fixed
 // duration would play him faster on one screen than the next.
-const MS_PER_VIEWPORT = 1700
+const MS_PER_VIEWPORT = 1350
 // How much wheel has to pile up before the page moves — the dead zone. Roughly
 // one firm notch of a mouse wheel, or a short trackpad push.
-const WHEEL_THRESHOLD = 90
+const WHEEL_THRESHOLD = 65
 // A pause this long between turns means the visitor stopped, so what they had
 // piled up doesn't count towards the next push.
 const GESTURE_RESET_MS = 200
@@ -26,10 +26,10 @@ const COOLDOWN_MS = 350
 // Treat "still parked at a stop" generously — a pixel or two of rubber banding
 // shouldn't count as having scrolled away.
 const END_SLACK = 4
-// An interior stop is passed through during ordinary scrolling too. Waiting for
-// the scroll to actually settle there keeps a mid-gesture tick from being read
-// as a fresh push and teleporting the visitor.
-const SETTLE_MS = 150
+// How long the page has to be still before it decides the visitor has stopped.
+// Long enough that a pause mid-gesture, or the tail of trackpad inertia, isn't
+// mistaken for the end of the scroll.
+const SETTLE_MS = 240
 
 const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2)
 
@@ -69,6 +69,14 @@ export default function useScrollAutoAdvance(stageRef, stops = [0, 1]) {
     // useScroll runs 'start start' to 'end end', so a progress fraction maps
     // straight onto a scroll position.
     const parkedAt = () => stops.findIndex((_, i) => Math.abs(window.scrollY - stopY(i)) <= END_SLACK)
+
+    const nearestStop = () => {
+      let best = 0
+      for (let i = 1; i < stops.length; i += 1) {
+        if (Math.abs(window.scrollY - stopY(i)) < Math.abs(window.scrollY - stopY(best))) best = i
+      }
+      return best
+    }
 
     let settle = null
 
@@ -152,11 +160,24 @@ export default function useScrollAutoAdvance(stageRef, stops = [0, 1]) {
       advance(stopY(next), direction)
     }
 
+    // Whatever left the page between two screens — cancelling a flight, dragging
+    // the scrollbar, a keyboard page-down — it ends up back on one. Without
+    // this the detents only ever caught a scroll that happened to finish within
+    // a few pixels of a stop, which by hand it never does, and from then on the
+    // whole page scrubbed by hand.
     const onScroll = () => {
       if (frame !== null) return
       clearTimeout(settle)
       settle = setTimeout(() => {
-        if (parkedAt() !== -1) armed = true
+        if (frame !== null) return
+        if (document.body.style.overflow === 'hidden') return
+        if (parkedAt() !== -1) {
+          armed = true
+          return
+        }
+        const to = stopY(nearestStop())
+        armed = false
+        advance(to, to > window.scrollY ? 1 : -1)
       }, SETTLE_MS)
     }
 
