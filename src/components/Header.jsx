@@ -96,11 +96,20 @@ function MenuIcon({ open }) {
   )
 }
 
-export default function Header() {
+export default function Header({ onContact }) {
   const [productsOpen, setProductsOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const closeTimer = useRef(null)
   const wrapRef = useRef(null)
+
+  // The contact screen is the far end of one continuous scroll animation, so
+  // the link plays the way there instead of teleporting past the whole story.
+  const goToContact = (event) => {
+    if (!onContact) return
+    event.preventDefault()
+    setMenuOpen(false)
+    onContact()
+  }
 
   const showProducts = () => {
     clearTimeout(closeTimer.current)
@@ -156,19 +165,18 @@ export default function Header() {
                 className={`transition-transform duration-300 ${productsOpen ? 'rotate-180' : ''}`}
               />
             </button>
-            <a href="#" onMouseEnter={hideProducts} className="transition-colors hover:text-ink">
-              Support
+            <a
+              href="#contact"
+              onMouseEnter={hideProducts}
+              onClick={goToContact}
+              className="transition-colors hover:text-ink"
+            >
+              Contact Us
             </a>
           </nav>
 
           <div className="flex items-center gap-4">
             <LanguageSwitcher />
-            <a
-              href="#contact"
-              className="flex h-8 items-center justify-center rounded-[4px] bg-ink px-3 text-[11px] font-medium text-white shadow-sm transition-colors duration-300 hover:bg-ink/80 sm:h-9 sm:px-4 sm:text-xs"
-            >
-              Contact Us
-            </a>
             <button
               type="button"
               onClick={() => setMenuOpen((open) => !open)}
@@ -213,8 +221,12 @@ export default function Header() {
                     {name}
                   </a>
                 ))}
-                <a href="#" className="mt-3 rounded-lg px-3 py-2.5 hover:bg-ink/[0.05]">
-                  Support
+                <a
+                  href="#contact"
+                  onClick={goToContact}
+                  className="mt-3 rounded-lg px-3 py-2.5 hover:bg-ink/[0.05]"
+                >
+                  Contact Us
                 </a>
               </nav>
             </motion.div>

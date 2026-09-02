@@ -1,27 +1,43 @@
 import { useEffect, useState } from 'react'
-import { useMotionValueEvent, useTransform } from 'framer-motion'
+import { useMotionValueEvent } from 'framer-motion'
 
-// Scrubs a folder of stabilized frames from a 0..1 progress value. Preloading
-// is opt-in per sequence: the first one warms on mount so scrubbing never waits
-// on the network, later ones hold off until the scroll is close enough to need
-// them, which keeps the initial page load to a single sequence.
-export default function useFrameSequence(progress, { dir, count, preload = true }) {
-  const [frame, setFrame] = useState(0)
-  const frameIndex = useTransform(progress, [0, 1], [0, count - 1])
+// Scrubs a folder of stabilized frames from a 0..1 progress value.
+//
+// The index is derived in the 'change' handler rather than through
+// useTransform: the same reason useScrollFade exists — a value framer computes
+// inside its own frame loop can arrive stale, while the event path fires with
+// the scroll.
+//
+// The integer frame goes through React state, but the fraction between two
+// frames is written straight to a ref'd element's opacity: crossfading the next
+// frame over the current one turns a 20fps flipbook into continuous motion, and
+// doing it outside React keeps that from costing a render on every hundredth of
+// a frame.
+export default function useFrameSequence(progress, { dir, count, blendRef }) {
+  const toIndex = (p) => Math.min(count - 1, Math.max(0, p * (count - 1)))
+  const [frame, setFrame] = useState(() => Math.floor(toIndex(progress.get())))
 
   useEffect(() => {
-    if (!preload) return
+    // Warm the browser cache so scrubbing never waits on a network request.
     for (let i = 0; i < count; i += 1) {
       const img = new Image()
       img.src = frameSrc(dir, i)
     }
-  }, [dir, count, preload])
+  }, [dir, count])
 
-  useMotionValueEvent(frameIndex, 'change', (value) => {
-    setFrame(Math.min(count - 1, Math.max(0, Math.round(value))))
+  useMotionValueEvent(progress, 'change', (p) => {
+    const index = toIndex(p)
+    const base = Math.floor(index)
+
+    if (blendRef?.current) blendRef.current.style.opacity = String(index - base)
+    setFrame((current) => (current === base ? current : base))
   })
 
-  return frameSrc(dir, frame)
+  return {
+    frame,
+    baseSrc: frameSrc(dir, frame),
+    nextSrc: frameSrc(dir, Math.min(count - 1, frame + 1)),
+  }
 }
 
 function frameSrc(dir, i) {

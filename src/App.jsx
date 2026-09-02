@@ -32,7 +32,7 @@ function App() {
       <div ref={stageRef} className="relative" style={{ height: `${STAGE_VH}vh` }}>
         <div className="sticky top-0 h-screen w-full overflow-hidden">
           <HeroCallouts progress={sceneA} />
-          <SoldierScrollFigure phaseA={sceneA} phaseB={sceneB} />
+          <SoldierScrollFigure progress={scrollYProgress} phaseB={sceneB} />
           <Hero progress={sceneA} exit={sceneB} />
           <About progress={sceneA} exit={sceneB} />
           <Products progress={sceneB} />
