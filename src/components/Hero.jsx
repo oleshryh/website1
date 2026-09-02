@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import DemoModal from './DemoModal'
 import PillButton from './PillButton'
-import { copyColumn, copySlot, figureBox } from './heroLayout'
+import { clearsFigure, copyColumn, copySlot, figureBox } from './heroLayout'
 import useScrollFade from './useScrollFade'
 import useViewport from './useViewport'
 
@@ -16,6 +16,7 @@ const RISE = 62
 // room for the diagonal.
 const RUN = 180
 const MIN_RUN = 78
+const QUOTE_WIDTH = 310
 
 // Leader line: rises diagonally off the figure, then runs flat to a dot by the
 // label. The tip tracks the figure while the label stays put, so the flat run
@@ -175,19 +176,17 @@ export default function Hero({ progress, exit, onContact }) {
         </div>
       </div>
 
-      {/* Bottom right, beside him — except in a window too narrow for him to
-          stand in the middle, where that corner is where he ends up. */}
-      <blockquote
-        style={{
-          opacity: textOpacity,
-          top: box.centred ? 'auto' : '22%',
-          bottom: box.centred ? 96 : 'auto',
-        }}
-        className="pointer-events-none absolute right-6 hidden w-[310px] text-right text-[15px] font-light leading-[1.45] text-ink/70 md:right-9 lg:block xl:text-[16px]"
-      >
-        "The future of professional training begins with technology that transforms
-        virtual scenarios into real experience."
-      </blockquote>
+      {/* Bottom right, beside him. It is decoration, so in a window where he
+          reaches that corner it simply steps out rather than moving. */}
+      {clearsFigure(box, vw, QUOTE_WIDTH) && (
+        <blockquote
+          style={{ opacity: textOpacity, width: QUOTE_WIDTH }}
+          className="pointer-events-none absolute bottom-24 right-6 hidden text-right text-[16px] font-light text-ink/70 md:right-9 lg:block"
+        >
+          "The future of professional training begins with technology that transforms
+          virtual scenarios into real experience."
+        </blockquote>
+      )}
     </section>
   )
 }

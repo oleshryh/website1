@@ -1,6 +1,8 @@
-import { copyColumn, copySlot, CTA_SPACER, figureBox } from './heroLayout'
+import { clearsFigure, copyColumn, copySlot, CTA_SPACER, figureBox } from './heroLayout'
 import useScrollFade from './useScrollFade'
 import useViewport from './useViewport'
+
+const SERVICES_WIDTH = 430
 
 const SERVICES = [
   {
@@ -48,8 +50,12 @@ export default function About({ progress, exit }) {
       {/* Beside him on the right, and above his head instead in a window too
           narrow for him to stand in the middle. */}
       <div
-        style={box.centred ? { top: '71.4%' } : { top: '19%' }}
-        className="absolute right-6 hidden w-[min(430px,44vw)] space-y-5 text-right md:right-9 lg:block"
+        style={
+          clearsFigure(box, vw, SERVICES_WIDTH)
+            ? { top: '71.4%', width: SERVICES_WIDTH }
+            : { top: '19%', width: SERVICES_WIDTH }
+        }
+        className="absolute right-6 hidden space-y-5 text-right md:right-9 lg:block"
       >
         {SERVICES.map(({ title, lines }) => (
           <div key={title}>

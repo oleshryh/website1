@@ -18,7 +18,7 @@ const BASE_HEIGHT = HEIGHTS.main[0]
 
 // The step he takes on the third screen, in vw, so the product list gets the
 // room. Clamped to whatever is actually left between him and the window edge.
-const LANE_3 = 10
+const LANE_3 = 22
 
 // Softens both ends of the move so it doesn't start or stop on a corner.
 const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2)

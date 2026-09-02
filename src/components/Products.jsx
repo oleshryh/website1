@@ -66,7 +66,7 @@ export default function Products({ progress }) {
       style={{ pointerEvents: live ? 'auto' : 'none' }}
       // The right bound is what keeps the list clear of the parked figure, and
       // it also gives the inner w-full something to measure against.
-      className="absolute inset-y-0 left-6 right-6 flex items-start pt-32 md:left-9 lg:right-[52%] lg:items-center lg:pt-0"
+      className="absolute inset-y-0 left-6 right-6 flex items-start pt-32 md:left-9 lg:right-[54%] lg:items-center lg:pt-0"
     >
       <div className="w-full max-w-[760px] xl:max-w-[900px]">
         <div style={{ opacity: headerOpacity }} className="mb-6 lg:mb-7">
