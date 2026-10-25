@@ -5,6 +5,13 @@
 
 ## 2026-10-25
 
+### Второй экран — по макету из Figma
+- Заголовок «We develop next-generation VR training systems…» слева, справа два
+  абзаца о безопасной практике и реалистичных сценариях.
+- Внизу слева «ATMARAKSI VR PLATFORM (2026)», справа значок-щит.
+- Кнопки «Talk To Sales / View Demo» теперь уходят вместе с текстом первого
+  экрана — на втором экране их нет, как в макете.
+
 ### Первый экран — по макету из Figma
 - Новый заголовок «Advanced VR solutions for military training and professional
   development.» тонким шрифтом, над ним подпись «// Electronics & Software

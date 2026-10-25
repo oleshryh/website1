@@ -161,8 +161,8 @@ export default function Hero({ progress, exit, onContact }) {
   const box = figureBox(vw, vh)
   const copyRef = useRef(null)
   useReportCopyHeight('hero', copyRef)
-  // Headline block and quote fade together, well before the second screen
-  // arrives. The CTAs never fade — until the third screen takes over.
+  // Headline block, buttons and quote fade together, well before the second
+  // screen arrives.
   const textOpacity = useScrollFade(progress, [0.12, 0.3], [1, 0])
   const exitOpacity = useScrollFade(exit, [0.05, 0.25], [1, 0])
 
@@ -187,7 +187,13 @@ export default function Hero({ progress, exit, onContact }) {
               development.
             </h1>
           </div>
-          <CtaButtons onContact={onContact} />
+          {/* The second screen has no buttons of its own — the header's
+              sales button takes over — so these leave with the text. */}
+          <div
+            style={{ opacity: textOpacity, pointerEvents: textOpacity === 0 ? 'none' : undefined }}
+          >
+            <CtaButtons onContact={onContact} />
+          </div>
         </div>
       </div>
 

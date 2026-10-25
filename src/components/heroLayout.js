@@ -105,7 +105,3 @@ export function copyColumn(vw, vh) {
   if (mode === 'stacked') return {}
   return { maxWidth: mode === 'wide' ? COPY_WIDE : COPY_SIDE }
 }
-
-// Height of the button row, which only the first screen draws — the second
-// screen holds the same space empty so its text sits on the same line.
-export const CTA_SPACER = 'mt-8 h-[64px] lg:mt-12 lg:h-[76px]'

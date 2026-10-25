@@ -1,27 +1,31 @@
 import { useRef } from 'react'
-import { clearsFigure, copyColumn, copySlot, CTA_SPACER, figureBox } from './heroLayout'
+import { copySlot, view } from './heroLayout'
+import ProductMark from './ProductMark'
 import { useReportCopyHeight } from './stackedCopy'
 import useScrollFade from './useScrollFade'
 import useViewport from './useViewport'
 
-const SERVICES_WIDTH = 430
+// The design lines the headline and the paragraph up with the top of the social
+// rail, which is centred on the window and 168px tall.
+const TOP = 'calc(50% - 84px)'
+// The paragraph and the shield stop short of the rail: 24px margin, 36px rail,
+// 25px gap.
+const RIGHT = 85
 
-const SERVICES = [
-  {
-    title: 'VR Simulation Technology',
-    lines: ['Virtual environments, simulation software,', 'motion tracking, and weapon modeling.'],
-  },
-  {
-    title: 'Electronic Systems Engineering',
-    lines: ['Custom hardware, sensors, cooling systems,', 'and specialized electronic components.'],
-  },
-]
+function Headline({ className = '' }) {
+  return (
+    <h2 className={`text-[24px] font-light leading-[1.22] sm:text-[28px] lg:text-[32px] ${className}`}>
+      We develop next-generation <span className="font-thin text-muted">VR training systems</span>{' '}
+      and electronic solutions for mission readiness.
+    </h2>
+  )
+}
 
 export default function About({ progress, exit }) {
   const { w: vw, h: vh } = useViewport()
-  const box = figureBox(vw, vh)
+  const stacked = view(vw, vh) === 'stacked'
   const copyRef = useRef(null)
-  useReportCopyHeight('about', copyRef)
+  useReportCopyHeight('about', copyRef, stacked)
   // Fades in only after the first screen's copy is fully gone at 0.3, then
   // holds until the third screen clears the stage for the product list.
   const opacity =
@@ -33,47 +37,45 @@ export default function About({ progress, exit }) {
       style={{ opacity }}
       className="pointer-events-none absolute inset-0"
     >
-      {/* The same slot the first screen writes into, so this copy takes its
-          place rather than landing somewhere else on the screen — and the
-          buttons underneath stay clear of it. */}
-      <div ref={copyRef} className="absolute" style={copySlot(vw, vh)}>
-        <div style={copyColumn(vw, vh)}>
-          <h2 className="mb-3 text-[17px] font-medium leading-[21px] sm:mb-4 sm:text-[19px] sm:leading-[23px] lg:text-[22px] lg:leading-[27px]">
-            We develop next-generation <span className="text-muted">VR training systems</span>{' '}
-            and electronic solutions for mission readiness.
-          </h2>
-          <p className="text-[13px] font-light leading-[17px] text-muted sm:text-[14px] sm:leading-[18px] lg:text-[16px] lg:leading-[19px]">
-            Combining software, simulation technologies, and custom hardware, we create
-            realistic training environments for developing skills and preparing specialists
-            for real-world scenarios.
-          </p>
-          <div aria-hidden="true" className={CTA_SPACER} />
+      {stacked ? (
+        // Above him, in the slot the first screen's copy just left.
+        <div ref={copyRef} className="absolute" style={copySlot(vw, vh)}>
+          <Headline />
         </div>
-      </div>
-
-      {/* Beside him on the right, and above his head instead in a window too
-          narrow for him to stand in the middle. */}
-      <div
-        style={
-          clearsFigure(box, vw, SERVICES_WIDTH)
-            ? { top: '71.4%', width: SERVICES_WIDTH }
-            : { top: '19%', width: SERVICES_WIDTH }
-        }
-        className="absolute right-6 hidden space-y-5 text-right md:right-9 lg:block"
-      >
-        {SERVICES.map(({ title, lines }) => (
-          <div key={title}>
-            <h3 className="text-[14px] font-medium uppercase leading-[18px] xl:text-[16px] xl:leading-[19px]">
-              {title}
-            </h3>
-            <p className="text-[14px] font-light leading-[18px] text-muted xl:text-[16px] xl:leading-[19px]">
-              {lines[0]}
-              <br className="hidden xl:inline" />{' '}
-              {lines[1]}
-            </p>
+      ) : (
+        <>
+          <div className="absolute left-6 max-w-[453px]" style={{ top: TOP }}>
+            <Headline />
           </div>
-        ))}
-      </div>
+
+          <p
+            className="absolute w-[393px] text-right text-[16px] font-light leading-[1.2] text-[#929292]"
+            style={{ top: TOP, right: RIGHT }}
+          >
+            Our VR training systems enable <span className="text-ink">safe practice</span> without
+            live ammunition, reduce costs, and allow repeated exercises.
+            <br />
+            <br />
+            <span className="text-ink">Realistic scenarios</span> and performance tracking help
+            military personnel develop practical skills, assess progress, and identify mistakes.
+          </p>
+
+          <p className="absolute bottom-[46px] left-6 text-[12px] font-light uppercase leading-[1.25]">
+            Atmaraksi
+            <br />
+            VR platform
+            <br />
+            (2026)
+          </p>
+
+          <span
+            className="absolute bottom-[46px] flex h-6 w-6 items-center justify-center"
+            style={{ right: RIGHT }}
+          >
+            <ProductMark width={16} height={17} className="text-ink" />
+          </span>
+        </>
+      )}
     </section>
   )
 }

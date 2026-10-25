@@ -25,8 +25,9 @@ export function useStackedCopyHeight() {
   return useSyncExternalStore(subscribe, () => tallest)
 }
 
-// Reports the element's height for as long as it is mounted.
-export function useReportCopyHeight(key, ref) {
+// Reports the element's height for as long as it is mounted. `mounted` lets a
+// screen that only renders the element in some layouts re-attach when it does.
+export function useReportCopyHeight(key, ref, mounted = true) {
   useEffect(() => {
     const el = ref.current
     if (!el) return undefined
@@ -36,5 +37,5 @@ export function useReportCopyHeight(key, ref) {
       observer.disconnect()
       report(key, 0)
     }
-  }, [key, ref])
+  }, [key, ref, mounted])
 }
