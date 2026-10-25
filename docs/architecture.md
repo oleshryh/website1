@@ -134,7 +134,7 @@ React 19 + Vite 8 (сборщик) + Tailwind CSS 4 (стили) + framer-motion
 Цвета и шрифт заданы один раз в [`src/index.css`](../src/index.css) в блоке
 `@theme`, значения взяты из макета в Figma: `--color-canvas` (фон #EEEEEC),
 `--color-paper` (светлые плашки #FBFBFA), `--color-ink` (текст #0D0D0D),
-`--color-muted` (серый #A7A7A7).
+`--color-muted` (серый #A7A7A7). Там же анимация переливающейся промо-строки в шапке.
 Дальше по коду используются как Tailwind-классы `bg-canvas`, `text-ink`,
 `text-muted`. 
 
