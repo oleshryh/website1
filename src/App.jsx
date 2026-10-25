@@ -7,6 +7,7 @@ import Products from './components/Products'
 import Reticle from './components/Reticle'
 import SocialRail from './components/SocialRail'
 import SoldierScrollFigure from './components/SoldierScrollFigure'
+import TrustedBy from './components/TrustedBy'
 import { STAGE_STOPS, STAGE_VH } from './components/stage'
 import useScrollAutoAdvance from './components/useScrollAutoAdvance'
 
@@ -44,6 +45,7 @@ function App() {
       </div>
 
       <Products />
+      <TrustedBy />
     </div>
   )
 }
