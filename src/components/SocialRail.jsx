@@ -1,5 +1,4 @@
 import { SOCIALS } from '../data/socials'
-import useScrollFade from './useScrollFade'
 
 // One square button from the design, shared with the footer.
 export function SocialButton({ Icon, label, href }) {
@@ -14,17 +13,10 @@ export function SocialButton({ Icon, label, href }) {
   )
 }
 
-export default function SocialRail({ exit }) {
-  // The rail sits in the lane the figure parks in on the third screen, and
-  // floating buttons over the soldier read as clutter — so it steps aside with
-  // the rest of the first two screens.
-  const opacity = useScrollFade(exit, [0.3, 0.55], [1, 0])
-
+// On the first two screens only: it sits on the pinned screen and leaves with it.
+export default function SocialRail() {
   return (
-    <div
-      style={{ opacity, pointerEvents: opacity === 0 ? 'none' : undefined }}
-      className="fixed right-4 top-1/2 z-40 hidden -translate-y-1/2 flex-col gap-2 md:right-6 md:flex"
-    >
+    <div className="absolute right-4 top-1/2 z-40 hidden -translate-y-1/2 flex-col gap-2 md:right-6 md:flex">
       {SOCIALS.map((social) => (
         <SocialButton key={social.label} {...social} />
       ))}

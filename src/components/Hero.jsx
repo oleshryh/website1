@@ -156,7 +156,7 @@ export function HeroCallouts({ progress }) {
   )
 }
 
-export default function Hero({ progress, exit, onContact }) {
+export default function Hero({ progress, onContact }) {
   const { w: vw, h: vh } = useViewport()
   const box = figureBox(vw, vh)
   const copyRef = useRef(null)
@@ -164,16 +164,10 @@ export default function Hero({ progress, exit, onContact }) {
   // Headline block, buttons and quote fade together, well before the second
   // screen arrives.
   const textOpacity = useScrollFade(progress, [0.12, 0.3], [1, 0])
-  const exitOpacity = useScrollFade(exit, [0.05, 0.25], [1, 0])
 
   return (
-    // The section covers the whole stage, so once it has faded it has to stop
-    // taking pointer events or it swallows every click on the product list.
-    <section
-      id="top"
-      style={{ opacity: exitOpacity, pointerEvents: exitOpacity === 0 ? 'none' : undefined }}
-      className="absolute inset-0"
-    >
+    // The section covers the whole screen, so only its buttons take clicks.
+    <section id="top" className="pointer-events-none absolute inset-0">
       <div ref={copyRef} className="absolute" style={copySlot(vw, vh)}>
         <div style={copyColumn(vw, vh)}>
           <div style={{ opacity: textOpacity }}>
@@ -190,7 +184,8 @@ export default function Hero({ progress, exit, onContact }) {
           {/* The second screen has no buttons of its own — the header's
               sales button takes over — so these leave with the text. */}
           <div
-            style={{ opacity: textOpacity, pointerEvents: textOpacity === 0 ? 'none' : undefined }}
+            style={{ opacity: textOpacity }}
+            className={textOpacity === 0 ? '' : 'pointer-events-auto'}
           >
             <CtaButtons onContact={onContact} />
           </div>

@@ -85,12 +85,6 @@ export function clearsFigure(box, vw, width) {
   return vw - sidePad(vw) - width >= box.left + box.width * BODY_RIGHT
 }
 
-// How far right he can still step on the third screen before his shoulder
-// leaves the window.
-export function laneLimit(box, vw) {
-  return Math.max(0, vw - 12 - (box.left + box.width * BODY_RIGHT))
-}
-
 // Stacked, the copy hangs under the header; otherwise at the bottom left.
 export function copySlot(vw, vh) {
   const pad = sidePad(vw)

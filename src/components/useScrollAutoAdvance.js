@@ -45,8 +45,8 @@ export default function useScrollAutoAdvance(stageRef, stops = [0, 1]) {
     const stopY = (i) => stage.offsetTop + (stage.offsetHeight - window.innerHeight) * stops[i]
     const clampStop = (i) => Math.min(stops.length - 1, Math.max(0, i))
 
-    // Reduced motion loses the flight, not the destination: the nav link still
-    // has to reach the contact screen.
+    // Reduced motion loses the flight, not the destination: a nav link still
+    // has to reach its screen.
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       flyTo.current = (index) => window.scrollTo(0, stopY(clampStop(index)))
       return () => {
@@ -69,6 +69,8 @@ export default function useScrollAutoAdvance(stageRef, stops = [0, 1]) {
     // useScroll runs 'start start' to 'end end', so a progress fraction maps
     // straight onto a scroll position.
     const parkedAt = () => stops.findIndex((_, i) => Math.abs(window.scrollY - stopY(i)) <= END_SLACK)
+    // Below the last stop the page is past the stage and scrolls freely.
+    const pastStage = () => window.scrollY > stopY(stops.length - 1) + END_SLACK
 
     const nearestStop = () => {
       let best = 0
@@ -171,6 +173,7 @@ export default function useScrollAutoAdvance(stageRef, stops = [0, 1]) {
       settle = setTimeout(() => {
         if (frame !== null) return
         if (document.body.style.overflow === 'hidden') return
+        if (pastStage()) return
         if (parkedAt() !== -1) {
           armed = true
           return

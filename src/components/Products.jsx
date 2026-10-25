@@ -1,84 +1,80 @@
-import { ArrowRight } from 'lucide-react'
-import { PHOTO_TINT, PRODUCTS } from '../data/products'
-import useScrollFade from './useScrollFade'
+import { PRODUCTS } from '../data/products'
+import { ArrowRightIcon } from './icons'
+import ProductMark from './ProductMark'
 
-// The site sets the qualifying word of a phrase in muted grey — "designed for
-// realistic military training scenarios" in the hero, "next-generation VR
-// training systems" on the second screen. The product names carry the same
-// device: what the system trains is the name, that it is training is the tail.
-function splitTail(name) {
-  const at = name.lastIndexOf(' ')
-  return at === -1 ? [name, ''] : [name.slice(0, at), name.slice(at + 1)]
-}
+// The design's hover green, shared by everything on a card.
+const HOVER_TEXT = 'transition-colors duration-300 group-hover:text-[#32471f]'
 
-// One row per system, not a grid of tiles: these read as an offer sheet rather
-// than a shop. The hover treatment is the products menu's — photo wash under
-// the type, everything shifting into the same green — but the type is the
-// menu's turned up: an index numeral, a headline-sized name, a description
-// held to one narrow column.
-function ProductRow({ product: { slug, name, description, image }, progress, index }) {
-  const start = 0.5 + index * 0.07
-  const opacity = useScrollFade(progress, [start, start + 0.16], [0, 1])
-  const lift = useScrollFade(progress, [start, start + 0.16], [16, 0])
-  const [lead, tail] = splitTail(name)
-
+function ProductCard({ slug, number, title, cardLine, art, notes }) {
   return (
     <a
       href={`/products/${slug}`}
-      style={{ opacity, transform: `translateY(${lift}px)` }}
-      className="group relative isolate grid grid-cols-[auto_1fr_auto] items-start gap-x-5 border-t border-ink/10 py-6 last:border-b sm:gap-x-7 lg:py-7"
+      className="group flex h-[470px] flex-col gap-8 rounded-xl bg-canvas px-[18px] py-6 transition-colors duration-300 hover:bg-[#c0ceac]"
     >
-      <span
-        aria-hidden="true"
-        style={{ backgroundImage: `${PHOTO_TINT}, url('${image}')` }}
-        className="absolute inset-x-[-20px] inset-y-0 -z-10 rounded-lg bg-cover bg-center opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-      />
-      <span className="mt-1 text-[20px] font-extralight leading-none tabular-nums text-ink/25 transition-colors duration-300 group-hover:text-[#31461f]/60 lg:text-[24px]">
-        {String(index + 1).padStart(2, '0')}
-      </span>
-      <span className="transition-transform duration-300 ease-out group-hover:translate-x-1">
-        <h3 className="text-[20px] font-medium leading-[1.15] tracking-[-0.01em] text-ink transition-colors duration-300 group-hover:text-[#223213] sm:text-[23px] lg:text-[26px]">
-          {lead} {tail && <span className="font-light text-muted group-hover:text-[#3d5228]">{tail}</span>}
-        </h3>
-        <p className="mt-1.5 max-w-[330px] text-[13px] font-light leading-[1.35] text-ink/55 transition-colors duration-300 group-hover:text-[#3d5228] lg:text-[14px]">
-          {description}
-        </p>
-      </span>
-      <ArrowRight
-        size={18}
-        strokeWidth={1.4}
-        className="mt-1.5 text-ink/30 transition-[transform,color] duration-300 group-hover:translate-x-1 group-hover:text-[#31461f]"
-      />
+      <div className="flex items-center justify-between">
+        <span className={`text-[14px] text-muted ${HOVER_TEXT}`}>{number}</span>
+        <span className="flex h-6 w-6 items-center justify-center">
+          <ProductMark width={16} height={17} className={`text-ink ${HOVER_TEXT}`} />
+        </span>
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <h3 className={`text-[24px] text-ink ${HOVER_TEXT}`}>{title}</h3>
+        <p className={`text-[16px] text-muted ${HOVER_TEXT}`}>{cardLine}</p>
+      </div>
+
+      {/* The picture is laid out at the design's 295×220 and steps 8px left on
+          hover, as in the hover variant. */}
+      <div className="relative mx-auto h-[220px] w-[295px] shrink-0">
+        <div className="absolute inset-0 transition-transform duration-500 ease-out group-hover:-translate-x-2">
+          {art.map(({ src, x, y, w, h, overlay }) => (
+            <img
+              key={src}
+              src={src}
+              alt=""
+              loading="lazy"
+              className={`absolute select-none ${overlay ? 'mix-blend-overlay' : ''}`}
+              style={{ left: x, top: y, width: w, height: h }}
+              draggable={false}
+            />
+          ))}
+          {notes.map(({ text, x, y, w }) => (
+            <span
+              key={text}
+              className={`absolute text-[8px] uppercase leading-[1.2] text-muted ${HOVER_TEXT}`}
+              style={{ left: x, top: y, width: w }}
+            >
+              {text}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-auto flex items-center justify-between">
+        <span className={`text-[12px] uppercase text-muted ${HOVER_TEXT}`}>
+          // weapon training system
+        </span>
+        <span className="flex h-[30px] w-[30px] items-center justify-center rounded-full border-[0.5px] border-ink text-ink transition-colors duration-300 group-hover:border-[#32471f] group-hover:bg-[#32471f] group-hover:text-paper">
+          <ArrowRightIcon width={24} height={24} />
+        </span>
+      </div>
     </a>
   )
 }
 
-export default function Products({ progress }) {
-  const headerOpacity = useScrollFade(progress, [0.42, 0.58], [0, 1])
-  // Nothing here may take the cursor before it has arrived, or the invisible
-  // links sit on top of the first two screens.
-  const live = useScrollFade(progress, [0.5, 0.52], [0, 1]) > 0
-
+export default function Products() {
   return (
-    <section
-      id="products"
-      aria-label="Products"
-      style={{ pointerEvents: live ? 'auto' : 'none' }}
-      // The right bound is what keeps the list clear of the parked figure, and
-      // it also gives the inner w-full something to measure against.
-      className="absolute inset-y-0 left-6 right-6 flex items-start pt-32 md:left-9 lg:right-[54%] lg:items-center lg:pt-0"
-    >
-      <div className="w-full max-w-[760px] xl:max-w-[900px]">
-        <div style={{ opacity: headerOpacity }} className="mb-6 lg:mb-7">
-          <p className="mb-2 text-[11px] font-normal uppercase tracking-[0.16em] text-muted">
-            Products
-          </p>
-          <h2 className="max-w-[440px] text-[17px] font-medium leading-[21px] sm:text-[19px] lg:text-[22px] lg:leading-[27px]">
-            Three systems, <span className="text-muted">one training platform</span>.
-          </h2>
-        </div>
-        {PRODUCTS.map((product, index) => (
-          <ProductRow key={product.slug} product={product} progress={progress} index={index} />
+    <section id="products" className="bg-paper px-6 pb-[135px] pt-[124px]">
+      <p className="mb-3 text-[12px] uppercase leading-[14px] text-muted">// products</p>
+      <h2 className="mb-12 text-[24px] font-light leading-[1.22] sm:text-[28px] lg:text-[32px]">
+        Training solutions
+        <br />
+        <span className="font-thin text-muted">for real-world challenges.</span>
+      </h2>
+
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4">
+        {PRODUCTS.map((product) => (
+          <ProductCard key={product.slug} {...product} />
         ))}
       </div>
     </section>

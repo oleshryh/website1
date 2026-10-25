@@ -1,30 +1,15 @@
-// The soldier's two clips drive the whole page. Clip 1 runs across screens
-// 1-2-3, clip 2 across the reveal of the contact screen. Screen 2 lands on the
-// pose where he holds the weapon out, screen 3 on the pose where he stands
-// square — the clip's last frame.
+// The soldier's clip drives the first two screens. Screen 1 is its first frame,
+// screen 2 its last, where he stands square as in the design. After screen 2
+// the page scrolls on normally into the product cards.
 export const FRAME_COUNT = 122
-export const SPLIT_FRAME = 48
 const LAST_FRAME = FRAME_COUNT - 1
 
-// Scroll spent per frame of clip 1. One number for both of its transitions, so
-// he advances at exactly one rate from the top of the page to screen 3.
-const FRAME_VH = 2.3
-const TO_SCREEN_2 = SPLIT_FRAME * FRAME_VH
-const TO_SCREEN_3 = (LAST_FRAME - SPLIT_FRAME) * FRAME_VH
-// The white panel has to travel its own height past the top of the viewport to
-// uncover the black behind it, which is exactly one viewport of scroll.
-const REVEAL_VH = 100
+// Scroll spent per frame of the clip.
+const FRAME_VH = 1.5
+const TO_SCREEN_2 = LAST_FRAME * FRAME_VH
 
-// The panel holds screens 1-3: one viewport pinned, plus both transitions.
-export const PANEL_VH = 100 + TO_SCREEN_2 + TO_SCREEN_3
-export const STAGE_VH = PANEL_VH + REVEAL_VH
-
-const SCROLLABLE = STAGE_VH - 100
-export const SCREEN_2 = TO_SCREEN_2 / SCROLLABLE
-export const SCREEN_3 = (TO_SCREEN_2 + TO_SCREEN_3) / SCROLLABLE
-// Clip 1 finishes exactly as screen 3 settles; clip 2 owns the reveal.
-export const CLIP_HANDOVER = SCREEN_3
+// One viewport pinned, plus the transition between the two screens.
+export const STAGE_VH = 100 + TO_SCREEN_2
 
 // Module-level so the auto-advance effect isn't re-created every render.
-export const STAGE_STOPS = [0, SCREEN_2, SCREEN_3, 1]
-export const CONTACT_STOP = STAGE_STOPS.length - 1
+export const STAGE_STOPS = [0, 1]

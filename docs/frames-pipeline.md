@@ -35,10 +35,10 @@ node scripts/process-video.mjs media/video1.mp4 public/frames
 
 | Папка | Что это | Кадров |
 | --- | --- | --- |
-| `public/frames/` | Основной клип, экраны 1–3 | 122 |
-| `public/frames-turn/` | Разворот в профиль, экран 4 | 122 |
+| `public/frames/` | Основной клип, экраны 1–2 | 122 |
+| `public/frames-turn/` | Разворот в профиль — сейчас не используется | 122 |
 | `public/frames-sm/` | То же, но для телефонов | 61 |
-| `public/frames-turn-sm/` | То же, но для телефонов | 61 |
+| `public/frames-turn-sm/` | То же, но для телефонов — не используется | 61 |
 
 Лёгкие наборы делаются теми же командами с ключами `--step 2 --width 480`.
 Какой набор грузить, решает `src/components/useFrameSet.js` — один раз при

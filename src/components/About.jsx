@@ -21,15 +21,13 @@ function Headline({ className = '' }) {
   )
 }
 
-export default function About({ progress, exit }) {
+export default function About({ progress }) {
   const { w: vw, h: vh } = useViewport()
   const stacked = view(vw, vh) === 'stacked'
   const copyRef = useRef(null)
   useReportCopyHeight('about', copyRef, stacked)
-  // Fades in only after the first screen's copy is fully gone at 0.3, then
-  // holds until the third screen clears the stage for the product list.
-  const opacity =
-    useScrollFade(progress, [0.42, 0.55], [0, 1]) * useScrollFade(exit, [0.05, 0.28], [1, 0])
+  // Fades in only after the first screen's copy is fully gone at 0.3.
+  const opacity = useScrollFade(progress, [0.42, 0.55], [0, 1])
 
   return (
     <section
