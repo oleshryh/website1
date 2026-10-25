@@ -1,41 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { PHOTO_TINT, PRODUCTS } from '../data/products'
+import { PRODUCTS } from '../data/products'
+import { ArrowUpRightIcon, ChevronDownIcon } from './icons'
+import PillButton from './PillButton'
 import ProductMark from './ProductMark'
-
-function Logo() {
-  return (
-    <svg width="30" height="28" viewBox="0 0 34 32" fill="none" aria-hidden="true">
-      <path d="M17 1 L31 8 V17 C31 24 25 29 17 31 C9 29 3 24 3 17 V8 Z" fill="currentColor" />
-      <path d="M17 5 V27 M9 12 L17 17 L25 12" stroke="#eeeeec" strokeWidth="1.3" />
-    </svg>
-  )
-}
-
-function ChevronDown(props) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" {...props}>
-      <path d="m6 9 6 6 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
-
-function SparkleIcon(props) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
-      <path d="M12 2c.6 3.4 2.1 5.4 5.5 6C13.6 8.6 12 10.6 12 14c-.6-3.4-2.1-5.4-5.5-6C10 7.4 11.4 5.4 12 2Z" />
-      <path d="M19 14c.3 1.7 1 2.4 2.7 2.7-1.8.3-2.4 1-2.7 2.7-.3-1.7-1-2.4-2.7-2.7 1.7-.3 2.4-1 2.7-2.7Z" />
-    </svg>
-  )
-}
-
-function ArrowUpRightIcon(props) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" {...props}>
-      <path d="M7 17 17 7M9 7h8v8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
+import useScrollFade from './useScrollFade'
 
 const LANGUAGES = ['UA', 'EN']
 
@@ -44,7 +13,7 @@ function LanguageSwitcher() {
   const [lang, setLang] = useState('EN')
 
   return (
-    <div className="hidden h-9 items-center gap-0.5 rounded-full bg-ink/[0.05] p-1 sm:flex">
+    <div className="hidden h-[41px] items-center gap-1 rounded bg-paper p-1 sm:flex">
       {LANGUAGES.map((code) => {
         const active = code === lang
         return (
@@ -53,8 +22,8 @@ function LanguageSwitcher() {
             type="button"
             onClick={() => setLang(code)}
             aria-pressed={active}
-            className={`flex h-full items-center rounded-full px-3 text-xs transition-colors ${
-              active ? 'bg-white font-medium text-ink shadow-sm' : 'text-ink/40 hover:text-ink/70'
+            className={`flex h-full items-center rounded px-3 text-[14px] transition-colors ${
+              active ? 'bg-[#e9e9e9] text-ink' : 'text-muted hover:text-ink'
             }`}
           >
             {code}
@@ -69,15 +38,17 @@ function PromoBar() {
   return (
     <a
       href="#"
-      className="group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-t-3xl rounded-b-lg bg-gradient-to-r from-[#6d6d66] via-[#78786f] to-[#6d6d66] px-4 py-2 text-[11px] text-white/90 shadow-[0_6px_16px_rgba(20,20,18,0.1)] sm:text-xs"
+      className="group flex h-[30px] w-full items-center justify-center gap-3 rounded-t-3xl rounded-b-lg bg-gradient-to-r from-[#797973] to-[#7f7f7a] px-2.5 text-[11px] font-light leading-[18px] text-paper sm:text-[12px]"
     >
-      <span className="promo-gradient pointer-events-none absolute inset-0" />
-      <SparkleIcon width={12} height={12} className="relative hidden shrink-0 opacity-80 sm:block" />
-      <span className="relative">Realistic training without live ammunition</span>
-      <span className="relative hidden text-white/50 sm:inline">·</span>
-      <span className="relative flex items-center gap-1 font-medium text-white">
-        Learn more
-        <ArrowUpRightIcon width={12} height={12} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+      <span>Realistic training without live ammunition</span>
+      <span aria-hidden="true" className="h-0.5 w-0.5 rounded-full bg-paper" />
+      <span className="flex items-center gap-1 font-medium">
+        Download PDF
+        <ArrowUpRightIcon
+          width={12}
+          height={12}
+          className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+        />
       </span>
     </a>
   )
@@ -96,11 +67,34 @@ function MenuIcon({ open }) {
   )
 }
 
-export default function Header({ onContact }) {
+function ProductCard({ slug, title, tagline }) {
+  return (
+    <a
+      href={`/products/${slug}`}
+      className="group flex h-[128px] flex-col justify-between rounded-lg bg-[#ececec] p-[18px] transition-colors duration-300 hover:bg-[#c3d1b3]"
+    >
+      <ProductMark
+        width={16}
+        height={17}
+        className="text-ink transition-colors duration-300 group-hover:text-[#32471f]"
+      />
+      <span className="flex flex-col gap-1">
+        <span className="text-[16px] text-ink">{title}</span>
+        <span className="text-[14px] text-muted transition-colors duration-300 group-hover:text-[#32471f]">
+          {tagline}
+        </span>
+      </span>
+    </a>
+  )
+}
+
+// `progress` is the first screen's own 0..1: the sales button joins the header
+// once the first screen, which has its own big one, is on its way out.
+export default function Header({ progress, onContact }) {
   const [productsOpen, setProductsOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const closeTimer = useRef(null)
-  const wrapRef = useRef(null)
+  const salesOpacity = useScrollFade(progress, [0.3, 0.45], [0, 1])
 
   // The contact screen is the far end of one continuous scroll animation, so
   // the link plays the way there instead of teleporting past the whole story.
@@ -128,55 +122,62 @@ export default function Header({ onContact }) {
   }, [])
 
   return (
-    <header className="fixed inset-x-0 top-3 z-50 flex flex-col items-center gap-1.5 px-4 md:px-6">
+    <header className="fixed inset-x-0 top-[18px] z-50 flex flex-col gap-2 px-4 md:px-6">
       <PromoBar />
 
-      <div
-        ref={wrapRef}
-        onMouseLeave={hideProducts}
-        className="w-full overflow-hidden rounded-t-lg rounded-b-3xl border border-white/60 bg-white/70 shadow-[0_20px_60px_rgba(20,20,18,0.12)] backdrop-blur-2xl"
-      >
-        <div className="flex items-center justify-between gap-6 px-3 py-4">
-          <a href="#top" className="flex items-center gap-2.5 text-ink">
-            <Logo />
-            <span className="text-base font-medium tracking-wide sm:text-[17px] lg:text-lg">
-              ATMARAKSI
+      <div onMouseLeave={hideProducts} className="w-full overflow-hidden rounded-lg bg-paper">
+        {/* Three columns with equal sides, so the menu sits dead centre
+            whatever appears at the right. */}
+        <div className="grid grid-cols-[1fr_auto_1fr] items-center px-2 py-3">
+          <a href="#top" className="flex items-center gap-1 justify-self-start text-ink">
+            <span className="px-2 py-1">
+              <img src="/brand/logo.png" width={28} height={28} alt="" />
             </span>
+            <span className="text-[16px] font-medium sm:text-[18px]">ATMARAKSI</span>
           </a>
 
-          <nav className="hidden items-center gap-8 text-sm text-ink/70 lg:flex">
-            <a href="#top" onMouseEnter={hideProducts} className="transition-colors hover:text-ink">
+          <nav className="hidden items-center gap-[38px] text-[14px] font-light text-ink lg:flex">
+            <a href="#top" onMouseEnter={hideProducts} className="transition-opacity hover:opacity-60">
               Home
-            </a>
-            <a href="#about" onMouseEnter={hideProducts} className="transition-colors hover:text-ink">
-              About Us
             </a>
             <button
               type="button"
               onMouseEnter={showProducts}
               onFocus={showProducts}
               aria-expanded={productsOpen}
-              className="flex items-center gap-1.5 transition-colors hover:text-ink"
+              className="flex items-center gap-1 transition-opacity hover:opacity-60"
             >
               Products
-              <ChevronDown
-                width={13}
+              <ChevronDownIcon
+                width={12}
                 height={13}
                 className={`transition-transform duration-300 ${productsOpen ? 'rotate-180' : ''}`}
               />
             </button>
+            <a href="#about" onMouseEnter={hideProducts} className="transition-opacity hover:opacity-60">
+              About Us
+            </a>
             <a
               href="#contact"
               onMouseEnter={hideProducts}
               onClick={goToContact}
-              className="transition-colors hover:text-ink"
+              className="transition-opacity hover:opacity-60"
             >
-              Contact Us
+              Support
             </a>
           </nav>
 
-          <div className="flex items-center gap-4">
+          <div className="col-start-3 flex items-center gap-3 justify-self-end">
             <LanguageSwitcher />
+            {/* Out of the row entirely while hidden, so on the first screen the
+                language switch stands at the right edge as in the design. */}
+            {salesOpacity > 0 && (
+              <div style={{ opacity: salesOpacity }} className="hidden lg:block">
+                <PillButton size="medium" href="#contact" onClick={goToContact}>
+                  Talk to sales
+                </PillButton>
+              </div>
+            )}
             <button
               type="button"
               onClick={() => setMenuOpen((open) => !open)}
@@ -212,13 +213,13 @@ export default function Header({ onContact }) {
                 <p className="px-3 pb-1 pt-3 text-xs uppercase tracking-wide text-ink/35">
                   Products
                 </p>
-                {PRODUCTS.map(({ slug, name }) => (
+                {PRODUCTS.map(({ slug, title }) => (
                   <a
                     key={slug}
                     href={`/products/${slug}`}
                     className="rounded-lg px-3 py-2.5 text-ink hover:bg-ink/[0.05]"
                   >
-                    {name}
+                    {title}
                   </a>
                 ))}
                 <a
@@ -226,7 +227,7 @@ export default function Header({ onContact }) {
                   onClick={goToContact}
                   className="mt-3 rounded-lg px-3 py-2.5 hover:bg-ink/[0.05]"
                 >
-                  Contact Us
+                  Support
                 </a>
               </nav>
             </motion.div>
@@ -245,30 +246,9 @@ export default function Header({ onContact }) {
                 opacity: { duration: 0.3, ease: 'easeOut' },
               }}
             >
-              <div className="grid grid-cols-1 gap-3 px-3 pb-3 sm:grid-cols-3">
-                {PRODUCTS.map(({ slug, name, description, image }) => (
-                  <a
-                    key={slug}
-                    href={`/products/${slug}`}
-                    className="group relative isolate overflow-hidden rounded-xl bg-ink/[0.06] p-5 transition-colors hover:bg-ink/[0.1]"
-                  >
-                    <span
-                      aria-hidden="true"
-                      style={{ backgroundImage: `${PHOTO_TINT}, url('${image}')` }}
-                      className="absolute inset-0 -z-10 bg-cover bg-center opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                    />
-                    <ProductMark
-                      width={16}
-                      height={15}
-                      className="mb-6 text-ink/70 transition-colors duration-300 group-hover:text-[#31461f]"
-                    />
-                    <h3 className="mb-0.5 text-sm font-normal text-ink transition-colors duration-300 group-hover:text-[#223213]">
-                      {name}
-                    </h3>
-                    <p className="text-xs leading-snug text-ink/55 transition-colors duration-300 group-hover:text-[#3d5228]">
-                      {description}
-                    </p>
-                  </a>
+              <div className="grid grid-cols-4 gap-[11px] px-3 pb-3 pt-[22px]">
+                {PRODUCTS.map((product) => (
+                  <ProductCard key={product.slug} {...product} />
                 ))}
               </div>
             </motion.div>

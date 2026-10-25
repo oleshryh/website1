@@ -123,6 +123,8 @@ React 19 + Vite 8 (сборщик) + Tailwind CSS 4 (стили) + framer-motion
 
 - `src/data/products.js` — список тренажёров (название, описание, картинка).
 - `public/products/` — фотографии карточек товаров.
+- `public/brand/logo.png` — логотип, выгружен из Figma.
+- `src/components/icons.jsx` — иконки-стрелки и галочка, перерисованные из макета.
 - `media/` — исходные видео, из которых нарезаны кадры. На сайт не попадают.
 - `scripts/process-video.mjs` — нарезка видео в кадры (см. [frames-pipeline.md](frames-pipeline.md)).
 - `scripts/generate-product-images.mjs` — генерация картинок-заглушек товаров.
@@ -130,9 +132,11 @@ React 19 + Vite 8 (сборщик) + Tailwind CSS 4 (стили) + framer-motion
 ## Стили
 
 Цвета и шрифт заданы один раз в [`src/index.css`](../src/index.css) в блоке
-`@theme`: `--color-canvas` (фон), `--color-ink` (текст), `--color-muted` (серый).
+`@theme`, значения взяты из макета в Figma: `--color-canvas` (фон #EEEEEC),
+`--color-paper` (светлые плашки #FBFBFA), `--color-ink` (текст #0D0D0D),
+`--color-muted` (серый #A7A7A7).
 Дальше по коду используются как Tailwind-классы `bg-canvas`, `text-ink`,
-`text-muted`. Там же анимация переливающейся промо-строки в шапке.
+`text-muted`. 
 
 ## Известные ограничения
 

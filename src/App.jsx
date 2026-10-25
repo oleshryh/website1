@@ -42,7 +42,7 @@ function App() {
     // laid on top of it, and the last screen slides that panel up off its own
     // rounded bottom edge to show the contact screen that was always behind.
     <div className="bg-canvas">
-      <Header onContact={() => goToStop.current?.(CONTACT_STOP)} />
+      <Header progress={sceneA} onContact={() => goToStop.current?.(CONTACT_STOP)} />
       <SocialRail exit={sceneB} />
       <ContactScreen progress={sceneC} />
       <Reticle />
