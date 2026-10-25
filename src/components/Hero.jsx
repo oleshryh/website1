@@ -1,30 +1,30 @@
 import { useRef, useState } from 'react'
 import DemoModal from './DemoModal'
 import PillButton from './PillButton'
-import { clearsFigure, copyColumn, copySlot, figureBox } from './heroLayout'
+import { clearsFigure, copyColumn, copySlot, figureBox, view } from './heroLayout'
 import { useReportCopyHeight } from './stackedCopy'
 import useScrollFade from './useScrollFade'
 import useViewport from './useViewport'
 
-// Horizontal run of the diagonal per pixel of rise — keeps its angle constant.
-const DIAGONAL_SLOPE = 45 / 62
-const DOT_RADIUS = 3
+// Horizontal run of the diagonal per pixel of rise: the design draws it at 45°.
+const DIAGONAL_SLOPE = 1
+const DOT_RADIUS = 2
 const PAD = 4
-// The label sits this far above the point the line leaves the figure, which
-// keeps the diagonal at the same angle whatever size the figure is.
-const RISE = 62
-// Preferred run of the flat stretch, and the shortest one that still leaves
-// room for the diagonal.
-const RUN = 180
-const MIN_RUN = 78
-const QUOTE_WIDTH = 310
+// Where the label's title row sits below its top — the line meets it there.
+const TITLE_DROP = 21
+// Shortest flat stretch kept between the diagonal and the dot.
+const MIN_FLAT = 34
+// Labels stay clear of the social rail at the right edge.
+const RIGHT_LANE = 24 + 36 + 24
+const QUOTE_WIDTH = 275
 
 // Leader line: rises diagonally off the figure, then runs flat to a dot by the
 // label. The tip tracks the figure while the label stays put, so the flat run
 // simply takes up whatever distance is left between them.
-function Callout({ tipX, tipY, labelLeft, labelTop, labelWidth, title, subtitle }) {
-  const lineY = labelTop + 8
-  const dotX = labelLeft - 12
+function Callout({ tipX, tipY, labelLeft, labelTop, labelWidth, number, title, subtitle }) {
+  // The line meets the label at its title, under the small number.
+  const lineY = labelTop + TITLE_DROP
+  const dotX = labelLeft - 14
   const rise = tipY - lineY
   const elbow = rise * DIAGONAL_SLOPE
   const width = dotX - tipX
@@ -38,17 +38,18 @@ function Callout({ tipX, tipY, labelLeft, labelTop, labelWidth, title, subtitle 
       >
         <path
           d={`M0 ${rise + PAD} L${elbow} ${PAD} H${width}`}
-          stroke="#929292"
-          strokeWidth="1"
+          stroke="#a7a7a7"
+          strokeWidth="0.5"
         />
-        <circle cx={width} cy={PAD} r={DOT_RADIUS} fill="#929292" />
+        <circle cx={width} cy={PAD} r={DOT_RADIUS} fill="#a7a7a7" />
       </svg>
       <span
-        className="absolute text-[12px] font-normal leading-[1.35]"
+        className="absolute text-[12px] uppercase leading-[1.2]"
         style={{ left: labelLeft, top: labelTop, width: labelWidth }}
       >
-        <span className="text-[#0A0A0A]">{title}</span>{' '}
-        <span className="text-[#929292]">{subtitle}</span>
+        <span className="block text-muted">{number}</span>
+        <span className="text-ink">{title}</span>{' '}
+        <span className="font-light text-muted">{subtitle}</span>
       </span>
     </>
   )
@@ -66,7 +67,7 @@ export function CtaButtons({ onContact }) {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-6 sm:gap-8">
+    <div className="flex flex-wrap items-center gap-[15px]">
       <PillButton
         href="#contact"
         onClick={(event) => {
@@ -75,13 +76,13 @@ export function CtaButtons({ onContact }) {
           onContact()
         }}
       >
-        Contact Us
+        Talk To Sales
       </PillButton>
       <button
         type="button"
         ref={demoRef}
         onClick={openDemo}
-        className="text-sm font-normal underline underline-offset-4 sm:text-[15px] lg:text-base"
+        className="px-6 text-[16px] font-light underline underline-offset-4 transition-colors hover:text-[#929292] lg:text-[18px]"
       >
         View Demo
       </button>
@@ -96,16 +97,24 @@ export function CtaButtons({ onContact }) {
 // right, as far as the window allows.
 const CALLOUTS = [
   {
+    number: '01/',
     title: 'Digital',
     subtitle: 'Environment',
     tip: { fx: 0.478, fy: 0.126 },
-    labelWidth: 150,
+    labelWidth: 107,
+    // Label offset from the tip: puts the label where the design has it at
+    // 1440px, while the line still starts on this figure's goggles.
+    run: 278,
+    rise: 41,
   },
   {
+    number: '02/',
     title: 'Realistic',
     subtitle: 'Weapon Integration',
     tip: { fx: 0.679, fy: 0.319 },
-    labelWidth: 124,
+    labelWidth: 117,
+    run: 248,
+    rise: 39,
   },
 ]
 
@@ -115,6 +124,8 @@ export function HeroCallouts({ progress }) {
 
   const { w: vw, h: vh } = useViewport()
   const box = figureBox(vw, vh)
+  // With the copy above him there is no room for labels beside him either.
+  if (view(vw, vh) === 'stacked') return null
 
   return (
     // Not on a phone: the lines need room to the right of him that a small
@@ -123,12 +134,12 @@ export function HeroCallouts({ progress }) {
       style={{ opacity }}
       className="pointer-events-none absolute inset-0 hidden lg:block"
     >
-      {CALLOUTS.map(({ tip, ...rest }) => {
+      {CALLOUTS.map(({ tip, run, rise, ...rest }) => {
         const tipX = box.left + tip.fx * box.width
         const tipY = box.top + tip.fy * box.height
         const labelLeft = Math.max(
-          tipX + MIN_RUN,
-          Math.min(tipX + RUN, vw - 36 - rest.labelWidth),
+          tipX + (rise - TITLE_DROP) * DIAGONAL_SLOPE + MIN_FLAT,
+          Math.min(tipX + run, vw - RIGHT_LANE - rest.labelWidth),
         )
         return (
           <Callout
@@ -136,7 +147,7 @@ export function HeroCallouts({ progress }) {
             tipX={tipX}
             tipY={tipY}
             labelLeft={labelLeft}
-            labelTop={tipY - RISE}
+            labelTop={tipY - rise}
             {...rest}
           />
         )
@@ -166,13 +177,14 @@ export default function Hero({ progress, exit, onContact }) {
       <div ref={copyRef} className="absolute" style={copySlot(vw, vh)}>
         <div style={copyColumn(vw, vh)}>
           <div style={{ opacity: textOpacity }}>
-            <p className="mb-3 text-[13px] font-light text-muted sm:mb-4 sm:text-[14px] lg:text-[16px]">
-              Immersive VR Training Environment
+            <p className="mb-3 text-[12px] uppercase leading-[14px] text-muted">
+              // Electronics &amp; Software Development
             </p>
-            <h1 className="mb-7 text-[17px] font-medium leading-snug sm:mb-8 sm:text-[19px] lg:mb-9 lg:text-[22px]">
-              Advanced virtual reality software designed for{' '}
-              <span className="text-muted">realistic</span> military training{' '}
-              <span className="text-muted">scenarios</span> and professional skills development.
+            <h1 className="mb-8 text-[24px] font-light leading-[1.22] sm:text-[28px] lg:mb-12 lg:max-w-[370px] lg:text-[32px]">
+              Advanced <span className="font-thin text-muted">VR solutions</span>
+              <br className="hidden lg:block" /> for{' '}
+              <span className="font-thin text-muted">military training</span> and professional
+              development.
             </h1>
           </div>
           <CtaButtons onContact={onContact} />
@@ -184,7 +196,7 @@ export default function Hero({ progress, exit, onContact }) {
       {clearsFigure(box, vw, QUOTE_WIDTH) && (
         <blockquote
           style={{ opacity: textOpacity, width: QUOTE_WIDTH }}
-          className="pointer-events-none absolute bottom-24 right-6 hidden text-right text-[16px] font-light text-ink/70 md:right-9 lg:block"
+          className="pointer-events-none absolute bottom-6 right-6 hidden text-right text-[16px] font-light leading-[1.2] text-muted lg:block"
         >
           "The future of professional training begins with technology that transforms
           virtual scenarios into real experience."

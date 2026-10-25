@@ -1,21 +1,16 @@
-import { ArrowRight } from 'lucide-react'
 import { ArrowRightIcon } from './icons'
 
-// The site's one button shape: a capsule with the label on the left and the
-// arrow in its own circle at the right end. `light` is the white-on-black form
-// the contact screen uses, `dark` the ink-on-canvas form for the light panel.
+// The design's button: a capsule with the label on the left and the arrow in
+// its own circle at the right end. `dark` is ink on the light ground, `light`
+// the paper one for dark blocks. Both turn the design's green on hover.
 const VARIANTS = {
   dark: {
-    shell: 'bg-ink text-white hover:bg-ink/90',
-    bubble: 'bg-white text-ink',
+    shell: 'bg-ink text-paper hover:bg-[#c0ceac] hover:text-[#32471f]',
+    bubble: 'bg-paper text-ink group-hover:text-[#32471f]',
   },
   light: {
-    shell: 'bg-white text-ink hover:bg-white/90',
-    bubble: 'bg-ink text-white',
-  },
-  outline: {
-    shell: 'border border-ink/20 text-ink hover:border-ink/40',
-    bubble: 'bg-ink text-white',
+    shell: 'bg-paper text-ink hover:bg-[#c0ceac] hover:text-[#32471f]',
+    bubble: 'bg-ink text-paper group-hover:bg-paper group-hover:text-[#32471f]',
   },
 }
 
@@ -62,16 +57,16 @@ export default function PillButton({
   return (
     <Tag
       {...props}
-      className={`group inline-flex items-center gap-4 rounded-full py-1.5 pl-6 pr-1.5 text-sm font-normal transition-colors duration-300 disabled:opacity-50 sm:gap-5 sm:pl-7 sm:text-[15px] ${shell} ${className}`}
+      className={`group inline-flex h-[64px] items-center rounded-full p-1 text-[16px] font-light transition-colors duration-300 disabled:opacity-50 lg:h-[76px] lg:text-[18px] ${shell} ${className}`}
     >
-      <span>{children}</span>
+      <span className="px-5 lg:px-6">{children}</span>
       <span
         aria-hidden="true"
-        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-transform duration-300 ease-out group-hover:scale-105 sm:h-11 sm:w-11 ${bubble}`}
+        className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full transition-colors duration-300 lg:h-[68px] lg:w-[68px] ${bubble}`}
       >
-        <ArrowRight
-          size={16}
-          strokeWidth={1.6}
+        <ArrowRightIcon
+          width={24}
+          height={24}
           className="transition-transform duration-300 ease-out group-hover:translate-x-0.5"
         />
       </span>

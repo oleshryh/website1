@@ -25,3 +25,39 @@ export function ChevronDownIcon(props) {
     </svg>
   )
 }
+
+export function InstagramIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" {...props}>
+      <path d="M9 5.25h6A3.75 3.75 0 0 1 18.75 9v6A3.75 3.75 0 0 1 15 18.75H9A3.75 3.75 0 0 1 5.25 15V9A3.75 3.75 0 0 1 9 5.25Z" stroke="currentColor" />
+      <circle cx="12" cy="12" r="2.92" stroke="currentColor" />
+      <circle cx="15.79" cy="8.21" r="0.73" fill="currentColor" />
+    </svg>
+  )
+}
+
+export function FacebookIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" {...props}>
+      <circle cx="12" cy="12" r="7.13" stroke="currentColor" />
+      <path d="M13.23 9.41h1.05V7.59h-1.2c-1.43 0-2.18.84-2.18 2.13v1.07H9.78v1.82h1.12v3.95h1.88v-3.95h1.27l.3-1.82h-1.57v-.91c0-.3.15-.46.45-.46Z" fill="currentColor" />
+    </svg>
+  )
+}
+
+export function YoutubeIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" {...props}>
+      <path d="M7.5 6.75h9a3 3 0 0 1 3 3v4.5a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-4.5a3 3 0 0 1 3-3Z" stroke="currentColor" />
+      <path d="M10.5 9.5v5L15 12l-4.5-2.5Z" fill="currentColor" />
+    </svg>
+  )
+}
+
+export function PhoneIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...props}>
+      <path d="m11.5 8.73-1.98 1.98a6.88 6.88 0 0 0 3.76 3.78l1.99-1.99 3.66 3.65-1.85 1.85a3.43 3.43 0 0 1-2.45 1A9.75 9.75 0 0 1 5 9.37a3.42 3.42 0 0 1 1-2.45l1.85-1.85 3.65 3.66Zm-4.68-.98a2.27 2.27 0 0 0-.66 1.63c0 3.63 4.83 8.45 8.46 8.45a2.27 2.27 0 0 0 1.63-.66l1.03-1.02-2-2-1.71 1.7-.35-.13a7.94 7.94 0 0 1-4.93-4.92l-.14-.36 1.71-1.71-2-2-1.03 1.02Z" />
+    </svg>
+  )
+}

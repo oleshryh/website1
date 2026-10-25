@@ -4,7 +4,8 @@
 // is the composition, not a case to fall out of. What adapts is the copy, and
 // it adapts in steps: each view gives it one fixed width, so a headline that
 // fits on three lines keeps fitting on three lines however the window is
-// dragged. Nothing is measured continuously against anything else.
+// dragged. Beside the narrow column he may stand a little shorter, so the
+// design's button row still fits at his left.
 
 export const FIGURE_ASPECT = 800 / 494
 // The frames carry transparent margins: the soldier himself only occupies the
@@ -13,35 +14,51 @@ export const FIGURE_ASPECT = 800 / 494
 export const BODY_LEFT = 0.12
 export const BODY_RIGHT = 0.86
 
-const sidePad = (vw) => (vw < 768 ? 24 : 36)
+// The design keeps one 24px margin at every width.
+const sidePad = () => 24
 const GAP = 20
 // The two measures the copy is ever set to beside him. The narrow one is not a
 // round number by accident: it is exactly what the button row needs to stay on
-// one line.
+// one line (the design's 224px button, 15px gap and 137px link).
 const COPY_WIDE = 442
-const COPY_SIDE = 292
+const COPY_SIDE = 376
 
-// Two thirds of the window tall, in the middle. The site's own rule, untouched.
-function standing(vw, vh) {
-  const height = Math.min((vh * 2) / 3, vw * 0.45)
+// The shortest he may get to make room for the narrow column, as a share of
+// the window's height.
+const MIN_SIDE_HEIGHT = 0.42
+
+function box(vw, vh, height) {
   const width = height * FIGURE_ASPECT
   return { width, height, left: (vw - width) / 2, top: vh - height }
 }
 
-// Room between the left margin and his shoulder.
-function room(vw, vh) {
-  const box = standing(vw, vh)
-  return box.left + box.width * BODY_LEFT - GAP - sidePad(vw)
+// Two thirds of the window tall, in the middle. The site's own rule.
+function natural(vw, vh) {
+  return Math.min((vh * 2) / 3, vw * 0.45)
+}
+
+// The tallest he can stand, centred, with a column this wide still clear of
+// his shoulder.
+function fitting(vw, column) {
+  const width = (vw / 2 - sidePad(vw) - GAP - column) / (0.5 - BODY_LEFT)
+  return width / FIGURE_ASPECT
 }
 
 // Upright or narrow, the copy goes above him — a phone or a tablet stood on end
-// has no second column whatever its pixel count. Lying down, it goes beside him
-// at whichever of the two measures still fits.
+// has no second column whatever its pixel count. Lying down, it goes beside him:
+// the wide column if he leaves room for it, otherwise the narrow one, for
+// which he may stand a little shorter.
 export function view(vw, vh) {
   if (vw < 768 || vh > vw) return 'stacked'
-  if (room(vw, vh) >= COPY_WIDE) return 'wide'
-  if (room(vw, vh) >= COPY_SIDE) return 'side'
+  if (fitting(vw, COPY_WIDE) >= natural(vw, vh)) return 'wide'
+  if (fitting(vw, COPY_SIDE) >= vh * MIN_SIDE_HEIGHT) return 'side'
   return 'stacked'
+}
+
+function standing(vw, vh) {
+  const mode = view(vw, vh)
+  if (mode === 'side') return box(vw, vh, Math.min(natural(vw, vh), fitting(vw, COPY_SIDE)))
+  return box(vw, vh, natural(vw, vh))
 }
 
 // Stacked, the copy hangs just under the header and he stands on the bottom
@@ -59,9 +76,7 @@ export function figureBox(vw, vh, copyHeight = 0) {
   // on a short phone shrinks until he clears the buttons. Never below a third
   // of the window, so a phone on its side still shows him.
   const room = (vh - STACK_TOP - copyHeight - GAP) / (1 - HEAD_TOP)
-  const height = Math.max(vh / 3, Math.min(vw * 0.78, room))
-  const width = height * FIGURE_ASPECT
-  return { width, height, left: (vw - width) / 2, top: vh - height }
+  return box(vw, vh, Math.max(vh / 3, Math.min(vw * 0.78, room)))
 }
 
 // Whether something of this width, tucked into the right margin, stays clear of
@@ -81,7 +96,8 @@ export function copySlot(vw, vh) {
   const pad = sidePad(vw)
   const mode = view(vw, vh)
   if (mode === 'stacked') return { left: pad, right: pad, top: STACK_TOP }
-  return { left: pad, right: pad, bottom: mode === 'wide' ? 96 : 80 }
+  // The design keeps the button row 24px off the bottom edge.
+  return { left: pad, right: pad, bottom: 24 }
 }
 
 export function copyColumn(vw, vh) {
@@ -92,4 +108,4 @@ export function copyColumn(vw, vh) {
 
 // Height of the button row, which only the first screen draws — the second
 // screen holds the same space empty so its text sits on the same line.
-export const CTA_SPACER = 'mt-7 h-[52px] sm:mt-8 sm:h-[56px] lg:mt-9'
+export const CTA_SPACER = 'mt-8 h-[64px] lg:mt-12 lg:h-[76px]'
