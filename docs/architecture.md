@@ -31,11 +31,14 @@ React 19 + Vite 8 (сборщик) + Tailwind CSS 4 (стили) + framer-motion
 | 3 | `Products.jsx` | Четыре карточки тренажёров на светлом фоне, при наведении зеленеют |
 | 4 | `TrustedBy.jsx` | Большая цитата и шевроны подразделений (`public/units/`) |
 | 5 | `Clients.jsx` | Отзывы: вкладки с организациями, карточка с цитатой и видео. Тексты — `src/data/clients.js` |
-| 6 | `Details.jsx` | Чёрный блок «Ready to discuss the details?» с кнопкой (`#details`) |
+| 6 | `Details.jsx` | Чёрный блок «Ready to discuss the details?» с кнопкой на страницу заявки |
 | 7 | `Footer.jsx` | Подвал: логотип, соцсети, три колонки ссылок, большое слово ATMARAKSI (`public/brand/footer-wordmark.svg`) |
 
-Все кнопки «Talk to sales» ведут вниз, к чёрному блоку «Ready to discuss»
-(`#details`).
+Все кнопки «Talk to sales» и пункт меню Support ведут на отдельную страницу с
+формой заявки — `/contact` (`ContactPage.jsx`). Роутера нет: страницу выбирает
+`src/main.jsx` по адресу, адреса страниц лежат в `src/routes.js`. Заявка
+уходит через `src/data/submitLead.js` — пока адреса для заявок нет, форма
+только показывает «Request received.».
 
 ## Две раскладки первого экрана
 

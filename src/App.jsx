@@ -14,11 +14,6 @@ import TrustedBy from './components/TrustedBy'
 import { STAGE_STOPS, STAGE_VH } from './components/stage'
 import useScrollAutoAdvance from './components/useScrollAutoAdvance'
 
-// Every "talk to sales" on the page leads to the closing block.
-function goToContact() {
-  document.getElementById('details')?.scrollIntoView({ behavior: 'smooth' })
-}
-
 function App() {
   const stageRef = useRef(null)
   // 0 on the first screen, 1 on the second: the soldier's clip and both
@@ -32,7 +27,7 @@ function App() {
 
   return (
     <div className="bg-canvas">
-      <Header progress={scrollYProgress} onContact={goToContact} />
+      <Header progress={scrollYProgress} />
       <Reticle />
 
       {/* The first two screens are one pinned viewport that the scroll plays
@@ -40,7 +35,7 @@ function App() {
       <div ref={stageRef} className="relative" style={{ height: `${STAGE_VH}svh` }}>
         <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-canvas">
           <HeroCallouts progress={scrollYProgress} />
-          <Hero progress={scrollYProgress} onContact={goToContact} />
+          <Hero progress={scrollYProgress} />
           <About progress={scrollYProgress} />
           <SoldierScrollFigure progress={scrollYProgress} />
           <SocialRail />

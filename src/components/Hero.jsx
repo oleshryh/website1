@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { CONTACT_PATH } from '../routes'
 import DemoModal from './DemoModal'
 import PillButton from './PillButton'
 import { clearsFigure, copyColumn, copySlot, figureBox, view } from './heroLayout'
@@ -55,7 +56,7 @@ function Callout({ tipX, tipY, labelLeft, labelTop, labelWidth, number, title, s
   )
 }
 
-export function CtaButtons({ onContact }) {
+export function CtaButtons() {
   const [demoOpen, setDemoOpen] = useState(false)
   const [demoOrigin, setDemoOrigin] = useState(null)
   const demoRef = useRef(null)
@@ -68,14 +69,7 @@ export function CtaButtons({ onContact }) {
 
   return (
     <div className="flex flex-wrap items-center gap-[15px]">
-      <PillButton
-        href="#contact"
-        onClick={(event) => {
-          if (!onContact) return
-          event.preventDefault()
-          onContact()
-        }}
-      >
+      <PillButton href={CONTACT_PATH}>
         Talk To Sales
       </PillButton>
       <button
@@ -156,7 +150,7 @@ export function HeroCallouts({ progress }) {
   )
 }
 
-export default function Hero({ progress, onContact }) {
+export default function Hero({ progress }) {
   const { w: vw, h: vh } = useViewport()
   const box = figureBox(vw, vh)
   const copyRef = useRef(null)
@@ -187,7 +181,7 @@ export default function Hero({ progress, onContact }) {
             style={{ opacity: textOpacity }}
             className={textOpacity === 0 ? '' : 'pointer-events-auto'}
           >
-            <CtaButtons onContact={onContact} />
+            <CtaButtons />
           </div>
         </div>
       </div>

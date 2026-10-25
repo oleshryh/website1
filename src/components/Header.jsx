@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion, motionValue } from 'framer-motion'
 import { PRODUCTS } from '../data/products'
+import { CONTACT_PATH } from '../routes'
 import { ArrowUpRightIcon, ChevronDownIcon } from './icons'
 import PillButton from './PillButton'
 import ProductMark from './ProductMark'
 import useScrollFade from './useScrollFade'
 
 const LANGUAGES = ['UA', 'EN']
+const NO_PROGRESS = motionValue(0)
 
 function LanguageSwitcher() {
   // Visual only for now — no translation wired up yet.
@@ -90,21 +92,13 @@ function ProductCard({ slug, title, tagline }) {
 }
 
 // `progress` is the first screen's own 0..1: the sales button joins the header
-// once the first screen, which has its own big one, is on its way out.
-export default function Header({ progress, onContact }) {
+// once the first screen, which has its own big one, is on its way out. Pages
+// without the stage leave it out and never show the button.
+export default function Header({ progress }) {
   const [productsOpen, setProductsOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const closeTimer = useRef(null)
-  const salesOpacity = useScrollFade(progress, [0.3, 0.45], [0, 1])
-
-  // The contact screen is the far end of one continuous scroll animation, so
-  // the link plays the way there instead of teleporting past the whole story.
-  const goToContact = (event) => {
-    if (!onContact) return
-    event.preventDefault()
-    setMenuOpen(false)
-    onContact()
-  }
+  const salesOpacity = useScrollFade(progress ?? NO_PROGRESS, [0.3, 0.45], [0, 1])
 
   const showProducts = () => {
     clearTimeout(closeTimer.current)
@@ -130,7 +124,7 @@ export default function Header({ progress, onContact }) {
         {/* Three columns with equal sides, so the menu sits dead centre
             whatever appears at the right. */}
         <div className="grid grid-cols-[1fr_auto_1fr] items-center px-2 py-3">
-          <a href="#top" className="flex items-center gap-1 justify-self-start text-ink">
+          <a href="/#top" className="flex items-center gap-1 justify-self-start text-ink">
             <span className="px-2 py-1">
               <img src="/brand/logo.png" width={28} height={28} alt="" />
             </span>
@@ -138,7 +132,7 @@ export default function Header({ progress, onContact }) {
           </a>
 
           <nav className="hidden items-center gap-[38px] text-[14px] font-light text-ink lg:flex">
-            <a href="#top" onMouseEnter={hideProducts} className="transition-opacity hover:opacity-60">
+            <a href="/#top" onMouseEnter={hideProducts} className="transition-opacity hover:opacity-60">
               Home
             </a>
             <button
@@ -155,13 +149,12 @@ export default function Header({ progress, onContact }) {
                 className={`transition-transform duration-300 ${productsOpen ? 'rotate-180' : ''}`}
               />
             </button>
-            <a href="#about" onMouseEnter={hideProducts} className="transition-opacity hover:opacity-60">
+            <a href="/#about" onMouseEnter={hideProducts} className="transition-opacity hover:opacity-60">
               About Us
             </a>
             <a
-              href="#contact"
+              href={CONTACT_PATH}
               onMouseEnter={hideProducts}
-              onClick={goToContact}
               className="transition-opacity hover:opacity-60"
             >
               Support
@@ -174,7 +167,7 @@ export default function Header({ progress, onContact }) {
                 language switch stands at the right edge as in the design. */}
             {salesOpacity > 0 && (
               <div style={{ opacity: salesOpacity }} className="hidden lg:block">
-                <PillButton size="medium" href="#contact" onClick={goToContact}>
+                <PillButton size="medium" href={CONTACT_PATH}>
                   Talk to sales
                 </PillButton>
               </div>
@@ -205,10 +198,10 @@ export default function Header({ progress, onContact }) {
               className="lg:hidden"
             >
               <nav className="flex flex-col gap-1 px-3 pb-3 text-sm text-ink/70">
-                <a href="#top" className="rounded-lg px-3 py-2.5 hover:bg-ink/[0.05]">
+                <a href="/#top" className="rounded-lg px-3 py-2.5 hover:bg-ink/[0.05]">
                   Home
                 </a>
-                <a href="#about" className="rounded-lg px-3 py-2.5 hover:bg-ink/[0.05]">
+                <a href="/#about" className="rounded-lg px-3 py-2.5 hover:bg-ink/[0.05]">
                   About Us
                 </a>
                 <p className="px-3 pb-1 pt-3 text-xs uppercase tracking-wide text-ink/35">
@@ -224,8 +217,7 @@ export default function Header({ progress, onContact }) {
                   </a>
                 ))}
                 <a
-                  href="#contact"
-                  onClick={goToContact}
+                  href={CONTACT_PATH}
                   className="mt-3 rounded-lg px-3 py-2.5 hover:bg-ink/[0.05]"
                 >
                   Support

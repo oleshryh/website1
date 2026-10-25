@@ -75,8 +75,8 @@ function Story({ index, client: { name, quote, author, product, video } }) {
 }
 
 export default function Clients() {
-  // Opens on the one story the design shows.
-  const [active, setActive] = useState(CLIENTS.findIndex((client) => client.quote))
+  // Opens on the last tab, the story the design shows.
+  const [active, setActive] = useState(CLIENTS.length - 1)
 
   return (
     <section className="bg-canvas px-6 py-[124px]">
