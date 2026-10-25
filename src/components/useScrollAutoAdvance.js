@@ -1,34 +1,29 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 
-// A screen of the sticky stage is over a viewport of scroll deep, which is a
-// lot of wheel work for a visitor who only wants to see the next one.
+// The stage between two screens is a scrub through the soldier's animation,
+// and the page must never come to rest halfway through it.
 //
-// So a screen behaves like a detent. While the page is parked on one, the wheel
-// is swallowed and nothing moves at all — a stray notch can't leave the screen
-// half-shown. Keep scrolling and the turns add up; once they pass the threshold
-// the page plays the whole screen on its own, down to the next stop or back up
-// to the previous one. It reads the same in both directions.
+// So the screens are detents, and the way between them is a flight the page
+// plays on its own. The first turn of the wheel on a screen — either way — sets
+// it off; while it plays the wheel does nothing, neither speeding it up nor
+// stopping it. Coming back up from the blocks below works the same: the moment
+// the page enters the stage it flies the rest of the way to the first screen.
+// Whatever a trackpad or a spun wheel still sends after the landing is
+// swallowed too, so the page stays on the screen it arrived at.
 //
-// Timed by distance rather than a flat duration: the screens aren't equal
-// lengths, and the figure's animation is tied to scroll position, so a fixed
-// duration would play him faster on one screen than the next.
+// Timed by distance rather than a flat duration: the figure's animation is tied
+// to scroll position, so this keeps him at one pace however far the flight is.
 const MS_PER_VIEWPORT = 2200
-// How much wheel has to pile up before the page moves — the dead zone. Roughly
-// one firm notch of a mouse wheel, or a short trackpad push.
-const WHEEL_THRESHOLD = 65
-// A pause this long between turns means the visitor stopped, so what they had
-// piled up doesn't count towards the next push.
-const GESTURE_RESET_MS = 200
-// Trackpad flicks keep firing wheel events long after the fingers lift. Nothing
-// piles up for this long after a flight, so the tail of one flick can't shoot
-// straight through the screen it just landed on.
-const COOLDOWN_MS = 350
+// Wheel events closer together than this belong to one gesture (a flick and its
+// inertia, or a run of notches). Only after a pause this long does the wheel
+// count as a new push.
+const GESTURE_GAP_MS = 200
 // Treat "still parked at a stop" generously — a pixel or two of rubber banding
 // shouldn't count as having scrolled away.
 const END_SLACK = 4
-// How long the page has to be still before it decides the visitor has stopped.
-// Long enough that a pause mid-gesture, or the tail of trackpad inertia, isn't
-// mistaken for the end of the scroll.
+// Touch scrolling can't be taken over mid-swipe without fighting the finger, so
+// on a touch screen the page waits this long after the swipe has stopped and
+// then flies to the nearest screen.
 const SETTLE_MS = 240
 
 // A gentle sine curve rather than a cubic one: at its fastest it runs at about
@@ -38,181 +33,150 @@ const SETTLE_MS = 240
 const easeInOutSine = (t) => -(Math.cos(Math.PI * t) - 1) / 2
 
 export default function useScrollAutoAdvance(stageRef, stops = [0, 1]) {
-  // Handed back so a nav link can play the way to a screen instead of
-  // teleporting past the whole animation.
-  const flyTo = useRef(null)
-
   useEffect(() => {
     const stage = stageRef.current
-    if (!stage) return
+    if (!stage) return undefined
 
     const stopY = (i) => stage.offsetTop + (stage.offsetHeight - window.innerHeight) * stops[i]
-    const clampStop = (i) => Math.min(stops.length - 1, Math.max(0, i))
+    const first = () => stopY(0)
+    const last = () => stopY(stops.length - 1)
 
-    // Reduced motion loses the flight, not the destination: a nav link still
-    // has to reach its screen.
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      flyTo.current = (index) => window.scrollTo(0, stopY(clampStop(index)))
-      return () => {
-        flyTo.current = null
-      }
-    }
+    // Reduced motion: no flights, the page scrolls the ordinary way.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
 
     let frame = null
-    // 1 while flying down the stage, -1 while flying back up, 0 when parked.
-    let heading = 0
-    // Cleared while a nav flight is playing, so the wheel hands control back
-    // instead of fighting it.
-    let armed = true
-    // Wheel piled up towards the threshold, and which way it was pointing.
-    let charge = 0
-    let chargeDir = 0
+    // While set, the wheel is swallowed: during a flight, and after one until
+    // the gesture that was still running at the landing has died away.
+    let holding = false
     let lastWheelAt = 0
-    let coolingUntil = 0
-
-    // useScroll runs 'start start' to 'end end', so a progress fraction maps
-    // straight onto a scroll position.
-    const parkedAt = () => stops.findIndex((_, i) => Math.abs(window.scrollY - stopY(i)) <= END_SLACK)
-    // Below the last stop the page is past the stage and scrolls freely.
-    const pastStage = () => window.scrollY > stopY(stops.length - 1) + END_SLACK
-
-    const nearestStop = () => {
-      let best = 0
-      for (let i = 1; i < stops.length; i += 1) {
-        if (Math.abs(window.scrollY - stopY(i)) < Math.abs(window.scrollY - stopY(best))) best = i
-      }
-      return best
-    }
-
+    // What moved the page last — touch scrolling is left alone until it stops.
+    let lastInput = 'wheel'
+    let lastY = window.scrollY
     let settle = null
 
-    const stop = () => {
-      if (frame !== null) cancelAnimationFrame(frame)
-      frame = null
-      heading = 0
+    const parkedAt = () => stops.findIndex((_, i) => Math.abs(window.scrollY - stopY(i)) <= END_SLACK)
+    const insideStage = () =>
+      window.scrollY > first() + END_SLACK && window.scrollY < last() - END_SLACK
+    const modalOpen = () => document.body.style.overflow === 'hidden'
+
+    // The next stop in the given direction from where the page is now.
+    const stopToward = (direction) => {
+      const y = window.scrollY
+      if (direction > 0) {
+        for (let i = 0; i < stops.length; i += 1) if (stopY(i) > y + END_SLACK) return i
+        return stops.length - 1
+      }
+      for (let i = stops.length - 1; i >= 0; i -= 1) if (stopY(i) < y - END_SLACK) return i
+      return 0
     }
 
-    const advance = (to, direction, overrideDuration) => {
+    const fly = (index) => {
       const from = window.scrollY
-      if (to === from) return
+      const to = stopY(index)
+      if (Math.abs(to - from) <= END_SLACK) return
+      if (frame !== null) cancelAnimationFrame(frame)
 
       const started = performance.now()
-      const duration =
-        overrideDuration ?? (Math.abs(to - from) / window.innerHeight) * MS_PER_VIEWPORT
-      heading = direction
+      const duration = (Math.abs(to - from) / window.innerHeight) * MS_PER_VIEWPORT
+      holding = true
       const step = (now) => {
         const t = Math.min(1, (now - started) / duration)
         window.scrollTo(0, from + (to - from) * easeInOutSine(t))
-        if (t < 1) {
-          frame = requestAnimationFrame(step)
-        } else {
-          frame = null
-          heading = 0
-          // Ready for the return trip here rather than waiting on a scroll
-          // event — the last frame often lands on the pixel the previous one
-          // already reached, and then no scroll event ever comes.
-          armed = true
-          charge = 0
-          chargeDir = 0
-          coolingUntil = performance.now() + COOLDOWN_MS
-        }
+        lastY = window.scrollY
+        frame = t < 1 ? requestAnimationFrame(step) : null
       }
       frame = requestAnimationFrame(step)
     }
 
     const onWheel = (event) => {
-      if (event.deltaY === 0) return
+      if (event.deltaY === 0 || modalOpen()) return
+      lastInput = 'wheel'
       const direction = event.deltaY > 0 ? 1 : -1
+      const now = performance.now()
+      const sameGesture = now - lastWheelAt < GESTURE_GAP_MS
+      lastWheelAt = now
 
+      // In flight: the wheel changes nothing.
       if (frame !== null) {
-        // Only input against the flight counts as taking control back; the
-        // trailing events of the flick that started it do not.
-        if (direction !== heading) {
-          stop()
-          armed = false
-          charge = 0
-        }
+        if (event.cancelable) event.preventDefault()
         return
       }
 
-      // Between two screens the page scrolls the ordinary way.
       const here = parkedAt()
-      if (here === -1) return
-      const next = here + direction
-      // Nothing above the first screen or below the last: let the browser have
-      // its usual end-of-page behaviour.
-      if (next < 0 || next >= stops.length) return
-      // The demo modal parks the page by locking the body; don't fight it.
-      if (document.body.style.overflow === 'hidden') return
-
-      // Parked on a screen: hold it exactly where it is, whichever way the
-      // wheel turns, until enough of it has piled up.
-      if (event.cancelable) event.preventDefault()
-
-      const now = performance.now()
-      if (direction !== chargeDir || now - lastWheelAt > GESTURE_RESET_MS) {
-        charge = 0
-        chargeDir = direction
+      if (here === -1) {
+        // Outside the stage the page scrolls the ordinary way. (Inside it, off a
+        // stop, can only be a moment before onScroll launches a flight.)
+        if (insideStage() && event.cancelable) event.preventDefault()
+        return
       }
-      lastWheelAt = now
 
-      if (!armed || now < coolingUntil) return
+      // Just landed and the same gesture is still coming in: keep the page on
+      // the screen it arrived at.
+      if (holding && sameGesture) {
+        if (event.cancelable) event.preventDefault()
+        return
+      }
+      holding = false
 
-      charge += Math.abs(event.deltaY)
-      if (charge < WHEEL_THRESHOLD) return
+      const next = here + direction
+      // Nothing above the first screen; below the last one the page carries on
+      // into the blocks underneath the ordinary way.
+      if (next < 0 || next >= stops.length) return
 
-      charge = 0
-      armed = false
-      advance(stopY(next), direction)
+      if (event.cancelable) event.preventDefault()
+      fly(next)
     }
 
-    // Whatever left the page between two screens — cancelling a flight, dragging
-    // the scrollbar, a keyboard page-down — it ends up back on one. Without
-    // this the detents only ever caught a scroll that happened to finish within
-    // a few pixels of a stop, which by hand it never does, and from then on the
-    // whole page scrubbed by hand.
     const onScroll = () => {
-      if (frame !== null) return
+      const y = window.scrollY
+      const direction = y > lastY ? 1 : -1
+      lastY = y
+      if (frame !== null || modalOpen()) return
+
       clearTimeout(settle)
+      if (!insideStage()) return
+
+      // Wheel, keys or scrollbar brought the page into the stage (from below,
+      // most often): finish the way to the next screen at once.
+      if (lastInput !== 'touch') {
+        fly(stopToward(direction))
+        return
+      }
+
+      // A swipe: let it end, then fly to whichever screen is nearer.
       settle = setTimeout(() => {
-        if (frame !== null) return
-        if (document.body.style.overflow === 'hidden') return
-        if (pastStage()) return
-        if (parkedAt() !== -1) {
-          armed = true
-          return
-        }
-        const to = stopY(nearestStop())
-        armed = false
-        advance(to, to > window.scrollY ? 1 : -1)
+        if (frame !== null || !insideStage()) return
+        const toFirst = Math.abs(window.scrollY - first())
+        const toLast = Math.abs(window.scrollY - last())
+        fly(toFirst <= toLast ? 0 : stops.length - 1)
       }, SETTLE_MS)
     }
 
-    // A link jumping the whole page would otherwise take seven seconds at the
-    // wheel push's pace, so nav flights get their own, faster curve.
-    flyTo.current = (index) => {
-      const to = stopY(clampStop(index))
-      const span = Math.abs(to - window.scrollY) / window.innerHeight
-      stop()
-      armed = false
-      advance(to, to > window.scrollY ? 1 : -1, Math.min(2600, 700 + Math.sqrt(span) * 900))
+    const onTouch = () => {
+      lastInput = 'touch'
+    }
+    const onKey = () => {
+      lastInput = 'key'
+    }
+
+    // Opened or reloaded halfway through: land on a screen straight away.
+    if (insideStage()) {
+      const toFirst = Math.abs(window.scrollY - first())
+      fly(toFirst <= Math.abs(window.scrollY - last()) ? 0 : stops.length - 1)
     }
 
     window.addEventListener('wheel', onWheel, { passive: false })
-    window.addEventListener('touchstart', stop, { passive: true })
-    window.addEventListener('keydown', stop)
+    window.addEventListener('touchstart', onTouch, { passive: true })
+    window.addEventListener('keydown', onKey)
     window.addEventListener('scroll', onScroll, { passive: true })
 
     return () => {
-      stop()
-      flyTo.current = null
+      if (frame !== null) cancelAnimationFrame(frame)
       clearTimeout(settle)
       window.removeEventListener('wheel', onWheel)
-      window.removeEventListener('touchstart', stop)
-      window.removeEventListener('keydown', stop)
+      window.removeEventListener('touchstart', onTouch)
+      window.removeEventListener('keydown', onKey)
       window.removeEventListener('scroll', onScroll)
     }
   }, [stageRef, stops])
-
-  return flyTo
 }
