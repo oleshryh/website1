@@ -1,4 +1,5 @@
 import { figureBox, laneLimit } from './heroLayout'
+import { useStackedCopyHeight } from './stackedCopy'
 import useFrameSequence from './useFrameSequence'
 import useFrameSet from './useFrameSet'
 import useScrollFade from './useScrollFade'
@@ -51,7 +52,7 @@ export default function SoldierScrollFigure({ mainPhase, turnPhase, phaseA, phas
   const scale = heightScale(onTurn ? HEIGHTS.turn : HEIGHTS.main, clip.frame / (frames.count - 1))
 
   const { w: vw, h: vh } = useViewport()
-  const box = figureBox(vw, vh)
+  const box = figureBox(vw, vh, useStackedCopyHeight())
 
   // He finishes the second screen's move and only then walks out of centre, so
   // the step reads as part of the animation rather than a slide.

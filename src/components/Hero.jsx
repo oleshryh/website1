@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import DemoModal from './DemoModal'
 import PillButton from './PillButton'
 import { clearsFigure, copyColumn, copySlot, figureBox } from './heroLayout'
+import { useReportCopyHeight } from './stackedCopy'
 import useScrollFade from './useScrollFade'
 import useViewport from './useViewport'
 
@@ -147,6 +148,8 @@ export function HeroCallouts({ progress }) {
 export default function Hero({ progress, exit, onContact }) {
   const { w: vw, h: vh } = useViewport()
   const box = figureBox(vw, vh)
+  const copyRef = useRef(null)
+  useReportCopyHeight('hero', copyRef)
   // Headline block and quote fade together, well before the second screen
   // arrives. The CTAs never fade — until the third screen takes over.
   const textOpacity = useScrollFade(progress, [0.12, 0.3], [1, 0])
@@ -160,7 +163,7 @@ export default function Hero({ progress, exit, onContact }) {
       style={{ opacity: exitOpacity, pointerEvents: exitOpacity === 0 ? 'none' : undefined }}
       className="absolute inset-0"
     >
-      <div className="absolute" style={copySlot(vw, vh)}>
+      <div ref={copyRef} className="absolute" style={copySlot(vw, vh)}>
         <div style={copyColumn(vw, vh)}>
           <div style={{ opacity: textOpacity }}>
             <p className="mb-3 text-[13px] font-light text-muted sm:mb-4 sm:text-[14px] lg:text-[16px]">

@@ -1,4 +1,6 @@
+import { useRef } from 'react'
 import { clearsFigure, copyColumn, copySlot, CTA_SPACER, figureBox } from './heroLayout'
+import { useReportCopyHeight } from './stackedCopy'
 import useScrollFade from './useScrollFade'
 import useViewport from './useViewport'
 
@@ -18,6 +20,8 @@ const SERVICES = [
 export default function About({ progress, exit }) {
   const { w: vw, h: vh } = useViewport()
   const box = figureBox(vw, vh)
+  const copyRef = useRef(null)
+  useReportCopyHeight('about', copyRef)
   // Fades in only after the first screen's copy is fully gone at 0.3, then
   // holds until the third screen clears the stage for the product list.
   const opacity =
@@ -32,7 +36,7 @@ export default function About({ progress, exit }) {
       {/* The same slot the first screen writes into, so this copy takes its
           place rather than landing somewhere else on the screen — and the
           buttons underneath stay clear of it. */}
-      <div className="absolute" style={copySlot(vw, vh)}>
+      <div ref={copyRef} className="absolute" style={copySlot(vw, vh)}>
         <div style={copyColumn(vw, vh)}>
           <h2 className="mb-3 text-[17px] font-medium leading-[21px] sm:mb-4 sm:text-[19px] sm:leading-[23px] lg:text-[22px] lg:leading-[27px]">
             We develop next-generation <span className="text-muted">VR training systems</span>{' '}

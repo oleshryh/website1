@@ -44,12 +44,22 @@ export function view(vw, vh) {
   return 'stacked'
 }
 
-export function figureBox(vw, vh) {
+// Stacked, the copy hangs just under the header and he stands on the bottom
+// edge of the window, filling what is left between them.
+const STACK_TOP = 140
+// The empty band above his head inside each frame; it may slide under the copy.
+const HEAD_TOP = 0.08
+
+// copyHeight is the stacked copy's measured height (see stackedCopy.js). Only
+// the stacked view uses it.
+export function figureBox(vw, vh, copyHeight = 0) {
   if (view(vw, vh) !== 'stacked') return standing(vw, vh)
 
-  // Nothing stands beside him here, so he is sized to the window's width rather
-  // than to a column that isn't there.
-  const height = Math.min(vh * 0.46, vw * 0.78)
+  // Nothing stands beside him here, so he is sized to the window's width — and
+  // on a short phone shrinks until he clears the buttons. Never below a third
+  // of the window, so a phone on its side still shows him.
+  const room = (vh - STACK_TOP - copyHeight - GAP) / (1 - HEAD_TOP)
+  const height = Math.max(vh / 3, Math.min(vw * 0.78, room))
   const width = height * FIGURE_ASPECT
   return { width, height, left: (vw - width) / 2, top: vh - height }
 }
@@ -66,11 +76,11 @@ export function laneLimit(box, vw) {
   return Math.max(0, vw - 12 - (box.left + box.width * BODY_RIGHT))
 }
 
-// Stacked, the copy sits just above his head; otherwise at the bottom left.
+// Stacked, the copy hangs under the header; otherwise at the bottom left.
 export function copySlot(vw, vh) {
   const pad = sidePad(vw)
   const mode = view(vw, vh)
-  if (mode === 'stacked') return { left: pad, right: pad, bottom: figureBox(vw, vh).height + 16 }
+  if (mode === 'stacked') return { left: pad, right: pad, top: STACK_TOP }
   return { left: pad, right: pad, bottom: mode === 'wide' ? 96 : 80 }
 }
 
