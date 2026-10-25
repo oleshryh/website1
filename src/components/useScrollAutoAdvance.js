@@ -12,7 +12,7 @@ import { useEffect, useRef } from 'react'
 // Timed by distance rather than a flat duration: the screens aren't equal
 // lengths, and the figure's animation is tied to scroll position, so a fixed
 // duration would play him faster on one screen than the next.
-const MS_PER_VIEWPORT = 1350
+const MS_PER_VIEWPORT = 2200
 // How much wheel has to pile up before the page moves — the dead zone. Roughly
 // one firm notch of a mouse wheel, or a short trackpad push.
 const WHEEL_THRESHOLD = 65
@@ -31,7 +31,11 @@ const END_SLACK = 4
 // mistaken for the end of the scroll.
 const SETTLE_MS = 240
 
-const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2)
+// A gentle sine curve rather than a cubic one: at its fastest it runs at about
+// one and a half times the average speed instead of three, so in the middle of
+// the flight the soldier still gets every frame on screen instead of skipping
+// two or three at a time.
+const easeInOutSine = (t) => -(Math.cos(Math.PI * t) - 1) / 2
 
 export default function useScrollAutoAdvance(stageRef, stops = [0, 1]) {
   // Handed back so a nav link can play the way to a screen instead of
@@ -98,7 +102,7 @@ export default function useScrollAutoAdvance(stageRef, stops = [0, 1]) {
       heading = direction
       const step = (now) => {
         const t = Math.min(1, (now - started) / duration)
-        window.scrollTo(0, from + (to - from) * easeInOutCubic(t))
+        window.scrollTo(0, from + (to - from) * easeInOutSine(t))
         if (t < 1) {
           frame = requestAnimationFrame(step)
         } else {
