@@ -2,6 +2,8 @@ import { useRef } from 'react'
 import { useScroll } from 'framer-motion'
 import About from './components/About'
 import Clients from './components/Clients'
+import Details from './components/Details'
+import Footer from './components/Footer'
 import Header from './components/Header'
 import Hero, { HeroCallouts } from './components/Hero'
 import Products from './components/Products'
@@ -48,6 +50,8 @@ function App() {
       <Products />
       <TrustedBy />
       <Clients />
+      <Details />
+      <Footer />
     </div>
   )
 }

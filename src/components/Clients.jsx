@@ -87,7 +87,7 @@ export default function Clients() {
         <span className="font-thin text-muted">say about us.</span>
       </h2>
 
-      <div role="tablist" className="mb-6 flex gap-6 overflow-x-auto whitespace-nowrap">
+      <div role="tablist" className="mb-6 flex gap-6 overflow-x-auto whitespace-nowrap [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {CLIENTS.map((client, i) => (
           <button
             key={client.name}
