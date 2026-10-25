@@ -10,6 +10,7 @@
 | Подписи-выноски у фигуры солдата (с линиями) | `src/components/Hero.jsx`, массив `CALLOUTS` |
 | Текст второго экрана и два блока услуг | `src/components/About.jsx`, массив `SERVICES` |
 | Названия и описания тренажёров | `src/data/products.js` |
+| Отзывы клиентов (вкладки, цитаты, картинка видео) | `src/data/clients.js` |
 | Пункты меню, промо-строка сверху, кнопка «Contact» | `src/components/Header.jsx` |
 | Название вкладки браузера | `index.html`, тег `<title>` |
 

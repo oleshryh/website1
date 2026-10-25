@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { useScroll } from 'framer-motion'
 import About from './components/About'
+import Clients from './components/Clients'
 import Header from './components/Header'
 import Hero, { HeroCallouts } from './components/Hero'
 import Products from './components/Products'
@@ -46,6 +47,7 @@ function App() {
 
       <Products />
       <TrustedBy />
+      <Clients />
     </div>
   )
 }
