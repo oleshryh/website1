@@ -13,6 +13,7 @@ import SocialRail from './components/SocialRail'
 import SoldierScrollFigure from './components/SoldierScrollFigure'
 import TrustedBy from './components/TrustedBy'
 import { STAGE_VH } from './components/stage'
+import useSecondScreenCatch from './components/useSecondScreenCatch'
 import useStageTurn from './components/useStageTurn'
 import useViewport from './components/useViewport'
 
@@ -31,6 +32,8 @@ function StageIntro() {
   // screens' fades all read this one value, which plays out in time once the
   // scroll has asked for a screen.
   const turn = useStageTurn(scrollYProgress)
+  // One hard flick can't sweep past the second screen.
+  useSecondScreenCatch(stageRef)
 
   return (
     <>
