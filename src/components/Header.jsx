@@ -182,7 +182,11 @@ export default function Header({ progress }) {
     <header className="fixed inset-x-0 top-[18px] z-50 flex flex-col gap-2 px-3 md:px-6">
       <PromoBar />
 
-      <div onMouseLeave={hideProducts} className="w-full overflow-hidden rounded-lg bg-paper">
+      {/* Frosted: the page shows faintly through as it scrolls underneath. */}
+      <div
+        onMouseLeave={hideProducts}
+        className="w-full overflow-hidden rounded-lg bg-paper/70 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.6)] backdrop-blur-xl backdrop-saturate-150"
+      >
         {/* Three columns with equal sides, so the menu sits dead centre
             whatever appears at the right. */}
         <div className="grid grid-cols-[1fr_auto_1fr] items-center px-2 py-3">

@@ -37,12 +37,14 @@ body {
   }
 }
 
+/* Two slow glows drift across the grey bar: the site's hover green and a soft
+   light. Strong enough to notice, slow enough not to pull the eye. */
 .promo-gradient {
   background-image:
-    radial-gradient(circle, rgba(255, 255, 255, 0.16), transparent 60%),
-    radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent 55%);
+    radial-gradient(circle, rgba(192, 206, 172, 0.42), transparent 58%),
+    radial-gradient(circle, rgba(251, 251, 250, 0.26), transparent 52%);
   background-size:
-    180% 180%,
-    220% 220%;
-  animation: promo-wave 24s ease-in-out infinite;
+    170% 220%,
+    210% 260%;
+  animation: promo-wave 16s ease-in-out infinite;
 }
