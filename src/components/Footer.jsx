@@ -1,21 +1,33 @@
+import { NAV } from '../data/copy'
 import { PRODUCTS } from '../data/products'
 import { SOCIALS } from '../data/socials'
-import { SocialButton } from './SocialRail'
+import { useT } from '../i18n'
 import { url } from '../routes'
+import { SocialButton } from './SocialRail'
 
 // Links to pages that don't exist yet point nowhere for now.
 const COLUMNS = [
   {
-    title: 'Products',
+    title: NAV.products,
     links: PRODUCTS.map(({ slug, title }) => ({ label: title, href: url(`products/${slug}`) })),
   },
   {
-    title: 'Resources',
-    links: ['Documentation', 'Support', 'Jobs', 'Legal'].map((label) => ({ label, href: '#' })),
+    title: { en: 'Resources', ua: 'Ресурси' },
+    links: [
+      { en: 'Documentation', ua: 'Документація' },
+      NAV.support,
+      { en: 'Jobs', ua: 'Вакансії' },
+      { en: 'Legal', ua: 'Правова інформація' },
+    ].map((label) => ({ label, href: '#' })),
   },
   {
-    title: 'Company',
-    links: ['About', 'Case Studies', 'Gallery', 'Blog'].map((label) => ({ label, href: '#' })),
+    title: { en: 'Company', ua: 'Компанія' },
+    links: [
+      { en: 'About', ua: 'Про нас' },
+      { en: 'Case Studies', ua: 'Кейси' },
+      { en: 'Gallery', ua: 'Галерея' },
+      { en: 'Blog', ua: 'Блог' },
+    ].map((label) => ({ label, href: '#' })),
   },
 ]
 
@@ -24,6 +36,7 @@ function Rule() {
 }
 
 export default function Footer() {
+  const t = useT()
   return (
     <footer className="relative overflow-hidden bg-ink pb-40 text-paper lg:min-h-[575px] lg:pb-0">
       <div className="hidden px-6 pt-[31px] lg:block lg:px-[35px]">
@@ -44,20 +57,22 @@ export default function Footer() {
             </div>
           </div>
           <p className="text-[14px] font-light leading-[1.2] text-muted">
-            Our VR training systems help military and security personnel develop critical skills
-            through realistic, hands-on scenarios.
+            {t({
+              en: 'Our VR training systems help military and security personnel develop critical skills through realistic, hands-on scenarios.',
+              ua: 'Наші VR-тренажери допомагають військовим і силовим структурам відпрацьовувати критично важливі навички в реалістичних практичних сценаріях.',
+            })}
           </p>
         </div>
 
         <nav className="grid grid-cols-2 gap-y-10 sm:grid-cols-3 lg:w-[600px]">
           {COLUMNS.map(({ title, links }) => (
-            <div key={title} className="flex flex-col gap-[18px]">
-              <h3 className="text-[18px] font-medium">{title}</h3>
+            <div key={title.en} className="flex flex-col gap-[18px]">
+              <h3 className="text-[18px] font-medium">{t(title)}</h3>
               <ul className="flex flex-col gap-2 text-[14px] text-muted">
                 {links.map(({ label, href }) => (
-                  <li key={label}>
+                  <li key={label.en}>
                     <a href={href} className="transition-colors hover:text-paper">
-                      {label}
+                      {t(label)}
                     </a>
                   </li>
                 ))}
@@ -70,7 +85,7 @@ export default function Footer() {
       <div className="px-3 pt-[34px] lg:px-[35px]">
         <Rule />
         <p className="pt-[28px] text-[12px] text-muted lg:pl-7">
-          2026 Atmaraksi, All rights reserved
+          {t({ en: '2026 Atmaraksi, All rights reserved', ua: '2026 Atmaraksi, усі права захищені' })}
         </p>
       </div>
 

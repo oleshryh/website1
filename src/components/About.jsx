@@ -1,4 +1,5 @@
 import { useRef } from 'react'
+import { useT } from '../i18n'
 import { copySlot, view } from './heroLayout'
 import ProductMark from './ProductMark'
 import { useReportCopyHeight } from './stackedCopy'
@@ -12,13 +13,68 @@ const TOP = 'calc(50% - 84px)'
 // 25px gap.
 const RIGHT = 85
 
-// The second screen's headline, shared with the phone layout.
+// The second screen's texts, shared with the phone layout.
 export function Headline({ className = '' }) {
+  const t = useT()
   return (
     <h2 className={`text-[24px] font-light leading-[1.22] sm:text-[28px] lg:text-[32px] ${className}`}>
-      We develop next-generation <span className="font-thin text-muted">VR training systems</span>{' '}
-      and electronic solutions for mission readiness.
+      {t({
+        en: (
+          <>
+            We develop next-generation{' '}
+            <span className="font-thin text-muted">VR training systems</span> and electronic
+            solutions for mission readiness.
+          </>
+        ),
+        ua: (
+          <>
+            Ми розробляємо <span className="font-thin text-muted">VR-системи підготовки</span>{' '}
+            нового покоління та електронні рішення для бойової готовності.
+          </>
+        ),
+      })}
     </h2>
+  )
+}
+
+export function AboutText() {
+  const t = useT()
+  return t({
+    en: (
+      <>
+        Our VR training systems enable <span className="text-ink">safe practice</span> without live
+        ammunition, reduce costs, and allow repeated exercises.
+        <br />
+        <br />
+        <span className="text-ink">Realistic scenarios</span> and performance tracking help
+        military personnel develop practical skills, assess progress, and identify mistakes.
+      </>
+    ),
+    ua: (
+      <>
+        Наші VR-тренажери дають змогу <span className="text-ink">безпечно тренуватися</span> без
+        бойових набоїв, скорочують витрати й дозволяють повторювати вправи стільки, скільки
+        потрібно.
+        <br />
+        <br />
+        <span className="text-ink">Реалістичні сценарії</span> та відстеження результатів
+        допомагають військовим відпрацьовувати практичні навички, оцінювати прогрес і бачити
+        помилки.
+      </>
+    ),
+  })
+}
+
+export function PlatformLabel() {
+  const t = useT()
+  return (
+    <>
+      Atmaraksi
+      <br />
+      {t({ en: 'VR platform', ua: 'VR-платформа' })}
+      <br />
+      (2026)
+    </>
   )
 }
 
@@ -53,20 +109,11 @@ export default function About({ progress }) {
             className="absolute w-[393px] text-right text-[16px] font-light leading-[1.2] text-[#929292]"
             style={{ top: TOP, right: RIGHT }}
           >
-            Our VR training systems enable <span className="text-ink">safe practice</span> without
-            live ammunition, reduce costs, and allow repeated exercises.
-            <br />
-            <br />
-            <span className="text-ink">Realistic scenarios</span> and performance tracking help
-            military personnel develop practical skills, assess progress, and identify mistakes.
+            <AboutText />
           </p>
 
           <p className="absolute bottom-[46px] left-6 text-[12px] font-light uppercase leading-[1.25]">
-            Atmaraksi
-            <br />
-            VR platform
-            <br />
-            (2026)
+            <PlatformLabel />
           </p>
 
           <span

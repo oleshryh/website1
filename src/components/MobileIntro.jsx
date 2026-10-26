@@ -1,7 +1,8 @@
-import { Headline } from './About'
+import { useT } from '../i18n'
+import { url } from '../routes'
+import { AboutText, Headline, PlatformLabel } from './About'
 import { CtaButtons, HeroHeadline } from './Hero'
 import ProductMark from './ProductMark'
-import { url } from '../routes'
 
 // The first two screens on a phone, as in the mobile design: no animation and
 // no flight between them — two ordinary blocks, each with the soldier still.
@@ -17,9 +18,18 @@ const STANDING = url('frames-sm/frame-060.webp')
 const FRAME_HEIGHT = 'calc((100vw - 24px) / 0.57 * 494 / 800)'
 
 const CALLOUTS = [
-  ['Digital', 'Environment'],
-  ['Realistic', 'Weapon'],
-  ['Motion', 'Tracking'],
+  [
+    { en: 'Digital', ua: 'Цифрове' },
+    { en: 'Environment', ua: 'середовище' },
+  ],
+  [
+    { en: 'Realistic', ua: 'Реалістична' },
+    { en: 'Weapon', ua: 'зброя' },
+  ],
+  [
+    { en: 'Motion', ua: 'Відстеження' },
+    { en: 'Tracking', ua: 'рухів' },
+  ],
 ]
 
 function MobileHero() {
@@ -46,13 +56,14 @@ function MobileHero() {
 }
 
 function MobileAbout() {
+  const t = useT()
   return (
     <section id="about" className="scroll-mt-[130px] bg-canvas px-3 pb-16">
       <ul className="grid h-[62px] grid-cols-3 items-center rounded-lg bg-paper text-center text-[12px] uppercase leading-[1.2]">
         {CALLOUTS.map(([title, subtitle], i) => (
-          <li key={title} className={i > 0 ? 'border-l-[0.5px] border-muted/40' : ''}>
-            <span className="block text-ink">{title}</span>
-            <span className="block font-light text-muted">{subtitle}</span>
+          <li key={title.en} className={i > 0 ? 'border-l-[0.5px] border-muted/40' : ''}>
+            <span className="block text-ink">{t(title)}</span>
+            <span className="block font-light text-muted">{t(subtitle)}</span>
           </li>
         ))}
       </ul>
@@ -66,21 +77,12 @@ function MobileAbout() {
       </div>
 
       <p className="mt-6 text-[16px] font-light leading-[1.2] text-[#929292]">
-        Our VR training systems enable <span className="text-ink">safe practice</span> without
-        live ammunition, reduce costs, and allow repeated exercises.
-        <br />
-        <br />
-        <span className="text-ink">Realistic scenarios</span> and performance tracking help
-        military personnel develop practical skills, assess progress, and identify mistakes.
+        <AboutText />
       </p>
 
       <div className="mt-6 flex items-end justify-between">
         <p className="text-[12px] font-light uppercase leading-[1.25]">
-          Atmaraksi
-          <br />
-          VR platform
-          <br />
-          (2026)
+          <PlatformLabel />
         </p>
         <span className="flex h-6 w-6 items-center justify-center">
           <ProductMark width={16} height={17} className="text-ink" />

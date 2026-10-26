@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion, motionValue } from 'framer-motion'
+import { NAV, TALK_TO_SALES } from '../data/copy'
 import { PRODUCTS } from '../data/products'
 import { SOCIALS } from '../data/socials'
+import { LANGUAGES, useLang, useT } from '../i18n'
 import { CONTACT_PATH, url } from '../routes'
 import { ArrowUpRightIcon, ChevronDownIcon } from './icons'
 import PillButton from './PillButton'
@@ -10,12 +12,10 @@ import ProductMark from './ProductMark'
 import { SocialButton } from './SocialRail'
 import useScrollFade from './useScrollFade'
 
-const LANGUAGES = ['UA', 'EN']
 const NO_PROGRESS = motionValue(0)
 
 function LanguageSwitcher({ show }) {
-  // Visual only for now — no translation wired up yet.
-  const [lang, setLang] = useState('EN')
+  const { lang, setLang } = useLang()
 
   return (
     <div
@@ -42,6 +42,7 @@ function LanguageSwitcher({ show }) {
 }
 
 function PromoBar() {
+  const t = useT()
   return (
     <a
       href="#"
@@ -49,11 +50,11 @@ function PromoBar() {
     >
       <span className="promo-gradient pointer-events-none absolute inset-0" />
       <span className="relative whitespace-nowrap max-[359px]:hidden">
-        Realistic training without live ammunition
+        {t({ en: 'Realistic training without live ammunition', ua: 'Реалістичне навчання без бойових набоїв' })}
       </span>
       <span aria-hidden="true" className="relative h-0.5 w-0.5 rounded-full bg-paper max-[359px]:hidden" />
       <span className="relative flex items-center gap-1 whitespace-nowrap font-medium">
-        Download PDF
+        {t({ en: 'Download PDF', ua: 'Завантажити PDF' })}
         <ArrowUpRightIcon
           width={12}
           height={12}
@@ -78,16 +79,17 @@ function MenuIcon({ open }) {
 }
 
 const PHONE_LINKS = [
-  { label: 'Home', href: url('#top') },
-  { label: 'Products', href: url('#products') },
-  { label: 'About Us', href: url('#about') },
-  { label: 'Support', href: CONTACT_PATH },
+  { label: NAV.home, href: url('#top') },
+  { label: NAV.products, href: url('#products') },
+  { label: NAV.about, href: url('#about') },
+  { label: NAV.support, href: CONTACT_PATH },
 ]
 
 // The phone menu from the design: the page dims and blurs behind, the header
 // stays on top, and the links stand large down the left with the socials under
 // them. The page underneath doesn't scroll while it is open.
 function PhoneMenu({ open, onClose }) {
+  const t = useT()
   useEffect(() => {
     if (!open) return undefined
     const previous = document.body.style.overflow
@@ -111,12 +113,12 @@ function PhoneMenu({ open, onClose }) {
           <nav className="flex flex-col items-start gap-5">
             {PHONE_LINKS.map(({ label, href }) => (
               <a
-                key={label}
+                key={href}
                 href={href}
                 onClick={onClose}
                 className="text-[32px] font-thin leading-[39px] text-ink"
               >
-                {label}
+                {t(label)}
               </a>
             ))}
           </nav>
@@ -133,6 +135,7 @@ function PhoneMenu({ open, onClose }) {
 }
 
 function ProductCard({ slug, title, tagline }) {
+  const t = useT()
   return (
     <a
       href={url(`products/${slug}`)}
@@ -144,9 +147,9 @@ function ProductCard({ slug, title, tagline }) {
         className="text-ink transition-colors duration-300 group-hover:text-[#32471f]"
       />
       <span className="flex flex-col gap-1">
-        <span className="text-[16px] text-ink">{title}</span>
+        <span className="text-[16px] text-ink">{t(title)}</span>
         <span className="text-[14px] text-muted transition-colors duration-300 group-hover:text-[#32471f]">
-          {tagline}
+          {t(tagline)}
         </span>
       </span>
     </a>
@@ -157,6 +160,7 @@ function ProductCard({ slug, title, tagline }) {
 // once the first screen, which has its own big one, is on its way out. Pages
 // without the stage leave it out and never show the button.
 export default function Header({ progress }) {
+  const t = useT()
   const [productsOpen, setProductsOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const closeTimer = useRef(null)
@@ -199,7 +203,7 @@ export default function Header({ progress }) {
 
           <nav className="hidden items-center gap-[38px] text-[14px] font-light text-ink lg:flex">
             <a href={url('#top')} onMouseEnter={hideProducts} className="transition-opacity hover:opacity-60">
-              Home
+              {t(NAV.home)}
             </a>
             <button
               type="button"
@@ -208,7 +212,7 @@ export default function Header({ progress }) {
               aria-expanded={productsOpen}
               className="flex items-center gap-1 transition-opacity hover:opacity-60"
             >
-              Products
+              {t(NAV.products)}
               <ChevronDownIcon
                 width={12}
                 height={13}
@@ -216,14 +220,14 @@ export default function Header({ progress }) {
               />
             </button>
             <a href={url('#about')} onMouseEnter={hideProducts} className="transition-opacity hover:opacity-60">
-              About Us
+              {t(NAV.about)}
             </a>
             <a
               href={CONTACT_PATH}
               onMouseEnter={hideProducts}
               className="transition-opacity hover:opacity-60"
             >
-              Support
+              {t(NAV.support)}
             </a>
           </nav>
 
@@ -234,7 +238,7 @@ export default function Header({ progress }) {
             {salesOpacity > 0 && (
               <div style={{ opacity: salesOpacity }} className="hidden lg:block">
                 <PillButton size="medium" href={CONTACT_PATH}>
-                  Talk To Sales
+                  {t(TALK_TO_SALES)}
                 </PillButton>
               </div>
             )}

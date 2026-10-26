@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { CLIENTS } from '../data/clients'
+import { useLang, useT } from '../i18n'
 import DemoModal from './DemoModal'
 
 const pad = (n) => String(n).padStart(2, '0')
@@ -13,6 +14,7 @@ function PlayIcon(props) {
 }
 
 function Story({ index, client: { name, quote, author, product, video } }) {
+  const t = useT()
   const [demoOpen, setDemoOpen] = useState(false)
   const [origin, setOrigin] = useState(null)
   const videoRef = useRef(null)
@@ -30,23 +32,23 @@ function Story({ index, client: { name, quote, author, product, video } }) {
           {pad(index + 1)} / {pad(CLIENTS.length)}
         </span>
         <div className="flex max-w-[503px] flex-col gap-6">
-          <p className="text-[12px] uppercase text-muted">{name}</p>
+          <p className="text-[12px] uppercase text-muted">{t(name)}</p>
           {quote ? (
             <div className="flex flex-col gap-4">
               <blockquote className="text-[20px] font-light leading-[1.2] lg:text-[24px]">
-                {quote}
+                {t(quote)}
               </blockquote>
               <p className="flex flex-col gap-1.5 text-[12px] uppercase text-muted lg:flex-row lg:items-center lg:gap-[9px]">
-                <span>{author}</span>
+                <span>{t(author)}</span>
                 <span aria-hidden="true" className="hidden text-[16px] lg:inline">
                   |
                 </span>
-                <span>{product}</span>
+                <span>{t(product)}</span>
               </p>
             </div>
           ) : (
             <p className="text-[20px] font-light leading-[1.2] text-muted lg:text-[24px]">
-              Story coming soon.
+              {t({ en: 'Story coming soon.', ua: 'Відгук скоро з’явиться.' })}
             </p>
           )}
         </div>
@@ -75,6 +77,8 @@ function Story({ index, client: { name, quote, author, product, video } }) {
 }
 
 export default function Clients() {
+  const t = useT()
+  const { lang } = useLang()
   // Opens on the last tab, the story the design shows.
   const [active, setActive] = useState(CLIENTS.length - 1)
   const tabsRef = useRef(null)
@@ -95,26 +99,32 @@ export default function Clients() {
 
   return (
     <section className="bg-canvas px-3 py-24 lg:px-6 lg:py-[124px]">
-      <p className="mb-3 text-[12px] uppercase leading-[14px] text-muted">// client stories</p>
+      <p className="mb-3 text-[12px] uppercase leading-[14px] text-muted">
+        {t({ en: '// client stories', ua: '// відгуки клієнтів' })}
+      </p>
       <h2 className="mb-12 text-[24px] font-light leading-[1.22] sm:text-[28px] lg:text-[32px]">
-        What our clients
+        {t({ en: 'What our clients', ua: 'Що кажуть про нас' })}
         <br />
-        <span className="font-thin text-muted">say about us.</span>
+        <span className="font-thin text-muted">
+          {t({ en: 'say about us.', ua: 'наші клієнти.' })}
+        </span>
       </h2>
 
       <div ref={tabsRef} role="tablist" className="relative mb-6 flex gap-6 overflow-x-auto whitespace-nowrap [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {CLIENTS.map((client, i) => (
           <button
-            key={client.name}
+            key={client.name.en}
             type="button"
             role="tab"
             aria-selected={i === active}
             onClick={() => setActive(i)}
-            className={`border-b py-1 text-[16px] capitalize leading-[19px] transition-colors ${
+            className={`border-b py-1 text-[16px] leading-[19px] transition-colors ${
+              lang === 'EN' ? 'capitalize' : ''
+            } ${
               i === active ? 'border-black text-ink' : 'border-transparent text-muted hover:text-ink'
             }`}
           >
-            {client.name}
+            {t(client.name)}
           </button>
         ))}
       </div>

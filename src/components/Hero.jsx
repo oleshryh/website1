@@ -1,4 +1,6 @@
 import { useRef, useState } from 'react'
+import { TALK_TO_SALES, VIEW_DEMO } from '../data/copy'
+import { useT } from '../i18n'
 import { CONTACT_PATH } from '../routes'
 import DemoModal from './DemoModal'
 import PillButton from './PillButton'
@@ -23,6 +25,7 @@ const QUOTE_WIDTH = 275
 // label. The tip tracks the figure while the label stays put, so the flat run
 // simply takes up whatever distance is left between them.
 function Callout({ tipX, tipY, labelLeft, labelTop, labelWidth, number, title, subtitle }) {
+  const t = useT()
   // The line meets the label at its title, under the small number.
   const lineY = labelTop + TITLE_DROP
   const dotX = labelLeft - 14
@@ -49,14 +52,15 @@ function Callout({ tipX, tipY, labelLeft, labelTop, labelWidth, number, title, s
         style={{ left: labelLeft, top: labelTop, width: labelWidth }}
       >
         <span className="block text-muted">{number}</span>
-        <span className="text-ink">{title}</span>{' '}
-        <span className="font-light text-muted">{subtitle}</span>
+        <span className="text-ink">{t(title)}</span>{' '}
+        <span className="font-light text-muted">{t(subtitle)}</span>
       </span>
     </>
   )
 }
 
 export function CtaButtons() {
+  const t = useT()
   const [demoOpen, setDemoOpen] = useState(false)
   const [demoOrigin, setDemoOrigin] = useState(null)
   const demoRef = useRef(null)
@@ -70,7 +74,7 @@ export function CtaButtons() {
   return (
     <div className="flex flex-wrap items-center gap-4 lg:gap-[15px]">
       <PillButton href={CONTACT_PATH}>
-        Talk To Sales
+        {t(TALK_TO_SALES)}
       </PillButton>
       <button
         type="button"
@@ -78,7 +82,7 @@ export function CtaButtons() {
         onClick={openDemo}
         className="px-6 text-[16px] font-light underline underline-offset-4 max-[359px]:px-3 transition-colors hover:text-[#929292] lg:text-[18px]"
       >
-        View Demo
+        {t(VIEW_DEMO)}
       </button>
 
       <DemoModal open={demoOpen} origin={demoOrigin} onClose={() => setDemoOpen(false)} />
@@ -92,8 +96,8 @@ export function CtaButtons() {
 const CALLOUTS = [
   {
     number: '01/',
-    title: 'Digital',
-    subtitle: 'Environment',
+    title: { en: 'Digital', ua: 'Цифрове' },
+    subtitle: { en: 'Environment', ua: 'середовище' },
     tip: { fx: 0.478, fy: 0.126 },
     labelWidth: 107,
     // Label offset from the tip: puts the label where the design has it at
@@ -103,8 +107,8 @@ const CALLOUTS = [
   },
   {
     number: '02/',
-    title: 'Realistic',
-    subtitle: 'Weapon Integration',
+    title: { en: 'Realistic', ua: 'Реалістична' },
+    subtitle: { en: 'Weapon Integration', ua: 'інтеграція зброї' },
     tip: { fx: 0.679, fy: 0.319 },
     labelWidth: 117,
     run: 248,
@@ -137,7 +141,7 @@ export function HeroCallouts({ progress }) {
         )
         return (
           <Callout
-            key={rest.title}
+            key={rest.number}
             tipX={tipX}
             tipY={tipY}
             labelLeft={labelLeft}
@@ -152,22 +156,37 @@ export function HeroCallouts({ progress }) {
 
 // The first screen's label and headline, shared with the phone layout.
 export function HeroHeadline() {
+  const t = useT()
   return (
     <>
       <p className="mb-2 text-[12px] uppercase leading-[14px] text-muted lg:mb-3">
-        // Electronics &amp; Software Development
+        {t({ en: '// Electronics & Software Development', ua: '// Електроніка та розробка ПЗ' })}
       </p>
       {/* Broken into the design's three lines at every size. */}
       <h1 className="mb-6 text-[24px] font-light leading-[1.22] sm:text-[28px] lg:mb-12 lg:text-[32px]">
-        Advanced <span className="font-thin text-muted">VR solutions</span>
-        <br /> for <span className="font-thin text-muted">military training</span> and
-        <br /> professional development.
+        {t({
+          en: (
+            <>
+              Advanced <span className="font-thin text-muted">VR solutions</span>
+              <br /> for <span className="font-thin text-muted">military training</span> and
+              <br /> professional development.
+            </>
+          ),
+          ua: (
+            <>
+              Сучасні <span className="font-thin text-muted">VR-рішення</span> для
+              <br /> <span className="font-thin text-muted">військової підготовки</span> та
+              <br /> професійного розвитку.
+            </>
+          ),
+        })}
       </h1>
     </>
   )
 }
 
 export default function Hero({ progress }) {
+  const t = useT()
   const { w: vw, h: vh } = useViewport()
   const box = figureBox(vw, vh)
   const copyRef = useRef(null)
@@ -202,8 +221,10 @@ export default function Hero({ progress }) {
           style={{ opacity: textOpacity, width: QUOTE_WIDTH }}
           className="pointer-events-none absolute bottom-6 right-6 hidden text-right text-[16px] font-light leading-[1.2] text-muted lg:block"
         >
-          "The future of professional training begins with technology that transforms
-          virtual scenarios into real experience."
+          {t({
+            en: '"The future of professional training begins with technology that transforms virtual scenarios into real experience."',
+            ua: '«Майбутнє професійної підготовки починається з технологій, що перетворюють віртуальні сценарії на реальний досвід.»',
+          })}
         </blockquote>
       )}
     </section>
