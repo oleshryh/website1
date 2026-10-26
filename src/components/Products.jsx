@@ -64,9 +64,12 @@ function ProductCard({ slug, number, title, cardLine, art, notes }) {
 
 export default function Products() {
   return (
-    <section id="products" className="bg-paper px-6 pb-[135px] pt-[124px]">
+    <section
+      id="products"
+      className="rounded-t-3xl bg-paper px-6 pb-16 pt-24 lg:rounded-none lg:pb-[135px] lg:pt-[124px]"
+    >
       <p className="mb-3 text-[12px] uppercase leading-[14px] text-muted">// products</p>
-      <h2 className="mb-12 text-[24px] font-light leading-[1.22] sm:text-[28px] lg:text-[32px]">
+      <h2 className="mb-9 text-[28px] font-light leading-[1.22] lg:mb-12 lg:text-[32px]">
         Training solutions
         <br />
         <span className="font-thin text-muted">for real-world challenges.</span>

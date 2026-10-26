@@ -117,7 +117,7 @@ export default function Header({ progress }) {
   }, [])
 
   return (
-    <header className="fixed inset-x-0 top-[18px] z-50 flex flex-col gap-2 px-4 md:px-6">
+    <header className="fixed inset-x-0 top-[18px] z-50 flex flex-col gap-2 px-3 md:px-6">
       <PromoBar />
 
       <div onMouseLeave={hideProducts} className="w-full overflow-hidden rounded-lg bg-paper">
@@ -177,7 +177,7 @@ export default function Header({ progress }) {
               onClick={() => setMenuOpen((open) => !open)}
               aria-expanded={menuOpen}
               aria-label="Menu"
-              className="flex h-9 w-9 items-center justify-center rounded-full text-ink transition-colors hover:bg-ink/[0.06] lg:hidden"
+              className="flex h-[41px] w-[41px] items-center justify-center rounded bg-ink text-paper transition-colors hover:bg-ink/85 lg:hidden"
             >
               <MenuIcon open={menuOpen} />
             </button>

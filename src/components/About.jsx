@@ -12,7 +12,8 @@ const TOP = 'calc(50% - 84px)'
 // 25px gap.
 const RIGHT = 85
 
-function Headline({ className = '' }) {
+// The second screen's headline, shared with the phone layout.
+export function Headline({ className = '' }) {
   return (
     <h2 className={`text-[24px] font-light leading-[1.22] sm:text-[28px] lg:text-[32px] ${className}`}>
       We develop next-generation <span className="font-thin text-muted">VR training systems</span>{' '}

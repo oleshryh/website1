@@ -25,11 +25,11 @@ function Rule() {
 export default function Footer() {
   return (
     <footer className="relative overflow-hidden bg-ink pb-40 text-paper lg:min-h-[575px] lg:pb-0">
-      <div className="px-6 pt-[31px] lg:px-[35px]">
+      <div className="hidden px-6 pt-[31px] lg:block lg:px-[35px]">
         <Rule />
       </div>
 
-      <div className="flex flex-col gap-12 px-6 pt-[69px] lg:flex-row lg:justify-between lg:pl-16">
+      <div className="flex flex-col gap-12 px-3 pt-24 lg:flex-row lg:justify-between lg:pl-16 lg:pr-6 lg:pt-[69px]">
         <div className="flex max-w-[305px] flex-col gap-6">
           <div className="flex flex-col gap-2.5 py-2.5">
             <a href="#top" className="flex h-9 items-center gap-1">
@@ -66,7 +66,7 @@ export default function Footer() {
         </nav>
       </div>
 
-      <div className="px-6 pt-[34px] lg:px-[35px]">
+      <div className="px-3 pt-[34px] lg:px-[35px]">
         <Rule />
         <p className="pt-[28px] text-[12px] text-muted lg:pl-7">
           2026 Atmaraksi, All rights reserved

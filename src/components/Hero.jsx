@@ -150,6 +150,23 @@ export function HeroCallouts({ progress }) {
   )
 }
 
+// The first screen's label and headline, shared with the phone layout.
+export function HeroHeadline() {
+  return (
+    <>
+      <p className="mb-3 text-[12px] uppercase leading-[14px] text-muted">
+        // Electronics &amp; Software Development
+      </p>
+      <h1 className="mb-8 text-[24px] font-light leading-[1.22] sm:text-[28px] lg:mb-12 lg:max-w-[370px] lg:text-[32px]">
+        Advanced <span className="font-thin text-muted">VR solutions</span>
+        <br className="hidden lg:block" /> for{' '}
+        <span className="font-thin text-muted">military training</span> and professional
+        development.
+      </h1>
+    </>
+  )
+}
+
 export default function Hero({ progress }) {
   const { w: vw, h: vh } = useViewport()
   const box = figureBox(vw, vh)
@@ -165,15 +182,7 @@ export default function Hero({ progress }) {
       <div ref={copyRef} className="absolute" style={copySlot(vw, vh)}>
         <div style={copyColumn(vw, vh)}>
           <div style={{ opacity: textOpacity }}>
-            <p className="mb-3 text-[12px] uppercase leading-[14px] text-muted">
-              // Electronics &amp; Software Development
-            </p>
-            <h1 className="mb-8 text-[24px] font-light leading-[1.22] sm:text-[28px] lg:mb-12 lg:max-w-[370px] lg:text-[32px]">
-              Advanced <span className="font-thin text-muted">VR solutions</span>
-              <br className="hidden lg:block" /> for{' '}
-              <span className="font-thin text-muted">military training</span> and professional
-              development.
-            </h1>
+            <HeroHeadline />
           </div>
           {/* The second screen has no buttons of its own — the header's
               sales button takes over — so these leave with the text. */}

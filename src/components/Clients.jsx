@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { CLIENTS } from '../data/clients'
 import DemoModal from './DemoModal'
 
@@ -36,9 +36,9 @@ function Story({ index, client: { name, quote, author, product, video } }) {
               <blockquote className="text-[20px] font-light leading-[1.2] lg:text-[24px]">
                 {quote}
               </blockquote>
-              <p className="flex flex-wrap items-center gap-x-[9px] text-[12px] uppercase text-muted">
+              <p className="flex flex-col gap-1.5 text-[12px] uppercase text-muted lg:flex-row lg:items-center lg:gap-[9px]">
                 <span>{author}</span>
-                <span aria-hidden="true" className="text-[16px]">
+                <span aria-hidden="true" className="hidden text-[16px] lg:inline">
                   |
                 </span>
                 <span>{product}</span>
@@ -77,9 +77,24 @@ function Story({ index, client: { name, quote, author, product, video } }) {
 export default function Clients() {
   // Opens on the last tab, the story the design shows.
   const [active, setActive] = useState(CLIENTS.length - 1)
+  const tabsRef = useRef(null)
+  const firstRun = useRef(true)
+
+  // On a phone the tabs run off the edge: keep the chosen one in view —
+  // straight away when the page opens, smoothly when a tab is picked.
+  useEffect(() => {
+    const list = tabsRef.current
+    const tab = list?.children[active]
+    if (!tab) return
+    list.scrollTo({
+      left: tab.offsetLeft + tab.offsetWidth - list.clientWidth,
+      behavior: firstRun.current ? 'auto' : 'smooth',
+    })
+    firstRun.current = false
+  }, [active])
 
   return (
-    <section className="bg-canvas px-6 py-[124px]">
+    <section className="bg-canvas px-3 py-24 lg:px-6 lg:py-[124px]">
       <p className="mb-3 text-[12px] uppercase leading-[14px] text-muted">// client stories</p>
       <h2 className="mb-12 text-[24px] font-light leading-[1.22] sm:text-[28px] lg:text-[32px]">
         What our clients
@@ -87,7 +102,7 @@ export default function Clients() {
         <span className="font-thin text-muted">say about us.</span>
       </h2>
 
-      <div role="tablist" className="mb-6 flex gap-6 overflow-x-auto whitespace-nowrap [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div ref={tabsRef} role="tablist" className="relative mb-6 flex gap-6 overflow-x-auto whitespace-nowrap [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {CLIENTS.map((client, i) => (
           <button
             key={client.name}

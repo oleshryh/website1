@@ -6,6 +6,7 @@ import Details from './components/Details'
 import Footer from './components/Footer'
 import Header from './components/Header'
 import Hero, { HeroCallouts } from './components/Hero'
+import MobileIntro from './components/MobileIntro'
 import Products from './components/Products'
 import Reticle from './components/Reticle'
 import SocialRail from './components/SocialRail'
@@ -13,8 +14,14 @@ import SoldierScrollFigure from './components/SoldierScrollFigure'
 import TrustedBy from './components/TrustedBy'
 import { STAGE_STOPS, STAGE_VH } from './components/stage'
 import useScrollAutoAdvance from './components/useScrollAutoAdvance'
+import useViewport from './components/useViewport'
 
-function App() {
+// Below this width the first two screens are the phone layout: still pictures
+// and ordinary scrolling instead of the animated stage.
+const PHONE_MAX = 767
+
+// Header and the first two screens on a computer or tablet.
+function StageIntro() {
   const stageRef = useRef(null)
   // 0 on the first screen, 1 on the second: the soldier's clip and both
   // screens' fades all read this one value.
@@ -26,9 +33,8 @@ function App() {
   useScrollAutoAdvance(stageRef, STAGE_STOPS)
 
   return (
-    <div className="bg-canvas">
+    <>
       <Header progress={scrollYProgress} />
-      <Reticle />
 
       {/* The first two screens are one pinned viewport that the scroll plays
           through; after the second the page scrolls on normally. */}
@@ -41,6 +47,24 @@ function App() {
           <SocialRail />
         </div>
       </div>
+    </>
+  )
+}
+
+function App() {
+  const { w } = useViewport()
+
+  return (
+    <div className="bg-canvas">
+      <Reticle />
+      {w <= PHONE_MAX ? (
+        <>
+          <Header />
+          <MobileIntro />
+        </>
+      ) : (
+        <StageIntro />
+      )}
 
       <Products />
       <TrustedBy />
