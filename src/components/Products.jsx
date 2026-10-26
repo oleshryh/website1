@@ -24,7 +24,7 @@ function ArtBox({ children }) {
   }, [])
 
   return (
-    <div ref={ref} className="mx-auto w-full max-w-[295px] shrink-0" style={{ height: ART_H * scale }}>
+    <div ref={ref} className="mx-auto w-full min-w-0 max-w-[295px] shrink-0" style={{ height: ART_H * scale }}>
       <div
         className="relative origin-top-left"
         style={{ width: ART_W, height: ART_H, transform: `scale(${scale})` }}

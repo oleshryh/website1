@@ -68,7 +68,7 @@ export function CtaButtons() {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-[15px]">
+    <div className="flex flex-wrap items-center gap-4 lg:gap-[15px]">
       <PillButton href={CONTACT_PATH}>
         Talk To Sales
       </PillButton>
@@ -76,7 +76,7 @@ export function CtaButtons() {
         type="button"
         ref={demoRef}
         onClick={openDemo}
-        className="px-3 text-[16px] font-light underline underline-offset-4 transition-colors hover:text-[#929292] lg:px-6 lg:text-[18px]"
+        className="px-6 text-[16px] font-light underline underline-offset-4 max-[359px]:px-3 transition-colors hover:text-[#929292] lg:text-[18px]"
       >
         View Demo
       </button>
@@ -154,14 +154,14 @@ export function HeroCallouts({ progress }) {
 export function HeroHeadline() {
   return (
     <>
-      <p className="mb-3 text-[12px] uppercase leading-[14px] text-muted">
+      <p className="mb-2 text-[12px] uppercase leading-[14px] text-muted lg:mb-3">
         // Electronics &amp; Software Development
       </p>
-      <h1 className="mb-8 text-[24px] font-light leading-[1.22] sm:text-[28px] lg:mb-12 lg:max-w-[370px] lg:text-[32px]">
+      {/* Broken into the design's three lines at every size. */}
+      <h1 className="mb-6 text-[24px] font-light leading-[1.22] sm:text-[28px] lg:mb-12 lg:text-[32px]">
         Advanced <span className="font-thin text-muted">VR solutions</span>
-        <br className="hidden lg:block" /> for{' '}
-        <span className="font-thin text-muted">military training</span> and professional
-        development.
+        <br /> for <span className="font-thin text-muted">military training</span> and
+        <br /> professional development.
       </h1>
     </>
   )

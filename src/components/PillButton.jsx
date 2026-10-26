@@ -58,12 +58,12 @@ export default function PillButton({
   return (
     <Tag
       {...props}
-      className={`group inline-flex h-12 items-center rounded-full p-1 text-[16px] font-light transition-colors duration-300 disabled:opacity-50 lg:h-[76px] lg:text-[18px] ${shell} ${className}`}
+      className={`group inline-flex h-12 items-center rounded-full p-1 text-[14px] font-light transition-colors duration-300 disabled:opacity-50 lg:h-[76px] lg:text-[18px] ${shell} ${className}`}
     >
-      <span className="px-4 lg:px-6">{children}</span>
+      <span className="px-3 lg:px-6">{children}</span>
       <span
         aria-hidden="true"
-        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors duration-300 lg:h-[68px] lg:w-[68px] ${bubble}`}
+        className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-colors duration-300 lg:h-[68px] lg:w-[68px] ${bubble}`}
       >
         <ArrowRightIcon
           width={24}
