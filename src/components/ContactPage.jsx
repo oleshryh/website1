@@ -4,6 +4,7 @@ import submitLead from '../data/submitLead'
 import Footer from './Footer'
 import Header from './Header'
 import PillButton from './PillButton'
+import { url } from '../routes'
 
 // The request form every "talk to sales" leads to. The design has no page for
 // it, so it borrows the home page's pieces: the same header and footer, the
@@ -64,7 +65,7 @@ function RequestForm() {
         <p className="max-w-[380px] text-[16px] font-light leading-[1.2] text-muted">
           We’ll come back to you within one working day, on the phone you left.
         </p>
-        <a href="/" className="text-[16px] font-light underline underline-offset-4">
+        <a href={url()} className="text-[16px] font-light underline underline-offset-4">
           Back to the home page
         </a>
       </div>

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { PRODUCTS } from '../data/products'
 import { ArrowRightIcon } from './icons'
 import ProductMark from './ProductMark'
+import { url } from '../routes'
 
 // The design's hover green, shared by everything on a card.
 const HOVER_TEXT = 'transition-colors duration-300 group-hover:text-[#32471f]'
@@ -38,7 +39,7 @@ function ArtBox({ children }) {
 function ProductCard({ slug, number, title, cardLine, art, notes }) {
   return (
     <a
-      href={`/products/${slug}`}
+      href={url(`products/${slug}`)}
       className="group flex h-[470px] flex-col gap-8 rounded-xl bg-canvas px-[18px] py-6 transition-colors duration-300 hover:bg-[#c0ceac]"
     >
       <div className="flex items-center justify-between">

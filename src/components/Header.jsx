@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { AnimatePresence, motion, motionValue } from 'framer-motion'
 import { PRODUCTS } from '../data/products'
 import { SOCIALS } from '../data/socials'
-import { CONTACT_PATH } from '../routes'
+import { CONTACT_PATH, url } from '../routes'
 import { ArrowUpRightIcon, ChevronDownIcon } from './icons'
 import PillButton from './PillButton'
 import ProductMark from './ProductMark'
@@ -78,9 +78,9 @@ function MenuIcon({ open }) {
 }
 
 const PHONE_LINKS = [
-  { label: 'Home', href: '/#top' },
-  { label: 'Products', href: '/#products' },
-  { label: 'About Us', href: '/#about' },
+  { label: 'Home', href: url('#top') },
+  { label: 'Products', href: url('#products') },
+  { label: 'About Us', href: url('#about') },
   { label: 'Support', href: CONTACT_PATH },
 ]
 
@@ -135,7 +135,7 @@ function PhoneMenu({ open, onClose }) {
 function ProductCard({ slug, title, tagline }) {
   return (
     <a
-      href={`/products/${slug}`}
+      href={url(`products/${slug}`)}
       className="group flex h-[128px] flex-col justify-between rounded-lg bg-[#ececec] p-[18px] transition-colors duration-300 hover:bg-[#c3d1b3]"
     >
       <ProductMark
@@ -190,15 +190,15 @@ export default function Header({ progress }) {
         {/* Three columns with equal sides, so the menu sits dead centre
             whatever appears at the right. */}
         <div className="grid grid-cols-[1fr_auto_1fr] items-center px-2 py-3">
-          <a href="/#top" className="flex items-center gap-1 justify-self-start text-ink">
+          <a href={url('#top')} className="flex items-center gap-1 justify-self-start text-ink">
             <span className="px-2 py-1">
-              <img src="/brand/logo.png" width={28} height={28} alt="" />
+              <img src={url('brand/logo.png')} width={28} height={28} alt="" />
             </span>
             <span className="text-[16px] font-medium sm:text-[18px]">ATMARAKSI</span>
           </a>
 
           <nav className="hidden items-center gap-[38px] text-[14px] font-light text-ink lg:flex">
-            <a href="/#top" onMouseEnter={hideProducts} className="transition-opacity hover:opacity-60">
+            <a href={url('#top')} onMouseEnter={hideProducts} className="transition-opacity hover:opacity-60">
               Home
             </a>
             <button
@@ -215,7 +215,7 @@ export default function Header({ progress }) {
                 className={`transition-transform duration-300 ${productsOpen ? 'rotate-180' : ''}`}
               />
             </button>
-            <a href="/#about" onMouseEnter={hideProducts} className="transition-opacity hover:opacity-60">
+            <a href={url('#about')} onMouseEnter={hideProducts} className="transition-opacity hover:opacity-60">
               About Us
             </a>
             <a

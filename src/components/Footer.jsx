@@ -1,12 +1,13 @@
 import { PRODUCTS } from '../data/products'
 import { SOCIALS } from '../data/socials'
 import { SocialButton } from './SocialRail'
+import { url } from '../routes'
 
 // Links to pages that don't exist yet point nowhere for now.
 const COLUMNS = [
   {
     title: 'Products',
-    links: PRODUCTS.map(({ slug, title }) => ({ label: title, href: `/products/${slug}` })),
+    links: PRODUCTS.map(({ slug, title }) => ({ label: title, href: url(`products/${slug}`) })),
   },
   {
     title: 'Resources',
@@ -32,8 +33,8 @@ export default function Footer() {
       <div className="flex flex-col gap-12 px-3 pt-24 lg:flex-row lg:justify-between lg:pl-16 lg:pr-6 lg:pt-[69px]">
         <div className="flex max-w-[305px] flex-col gap-6">
           <div className="flex flex-col gap-2.5 py-2.5">
-            <a href="#top" className="flex h-9 items-center gap-1">
-              <img src="/brand/logo-light.png" width={28} height={28} alt="" />
+            <a href={url('#top')} className="flex h-9 items-center gap-1">
+              <img src={url('brand/logo-light.png')} width={28} height={28} alt="" />
               <span className="text-[18px] font-medium">ATMARAKSI</span>
             </a>
             <div className="flex gap-2">
@@ -75,7 +76,7 @@ export default function Footer() {
 
       {/* The faded wordmark along the bottom edge, exported from the design. */}
       <img
-        src="/brand/footer-wordmark.svg"
+        src={url('brand/footer-wordmark.svg')}
         alt=""
         aria-hidden="true"
         className="pointer-events-none absolute bottom-0 left-0 w-full select-none"

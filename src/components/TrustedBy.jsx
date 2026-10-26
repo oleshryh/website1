@@ -1,12 +1,14 @@
+import { url } from '../routes'
+
 // Badges of the units that train on the systems, exported from Figma at 3×.
 // Widths as in the design: every badge is 48px tall, some are wider.
 const UNITS = [
-  { src: '/units/unit-1.png', w: 48 },
-  { src: '/units/unit-2.png', w: 48 },
-  { src: '/units/unit-3.png', w: 48 },
-  { src: '/units/unit-4.png', w: 54 },
-  { src: '/units/unit-5.png', w: 42 },
-  { src: '/units/unit-6.png', w: 59 },
+  { src: url('units/unit-1.png'), w: 48 },
+  { src: url('units/unit-2.png'), w: 48 },
+  { src: url('units/unit-3.png'), w: 48 },
+  { src: url('units/unit-4.png'), w: 54 },
+  { src: url('units/unit-5.png'), w: 42 },
+  { src: url('units/unit-6.png'), w: 59 },
 ]
 
 export default function TrustedBy() {

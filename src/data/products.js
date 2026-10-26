@@ -1,3 +1,5 @@
+import { url } from '../routes'
+
 // The four training systems, worded as in the design. `tagline` is the line
 // under the name in the header's menu; `cardLine` the one on the home page card,
 // where the design words the duel a little shorter.
@@ -13,8 +15,8 @@ export const PRODUCTS = [
     tagline: 'DShK, PKM and Browning training',
     cardLine: 'DShK, PKM and Browning training',
     art: [
-      { src: '/products/cards/machine-gun.png', x: 13, y: 32, w: 280, h: 187 },
-      { src: '/products/cards/machine-gun-reticle.svg', x: 31, y: 49, w: 26, h: 26 },
+      { src: url('products/cards/machine-gun.png'), x: 13, y: 32, w: 280, h: 187 },
+      { src: url('products/cards/machine-gun-reticle.svg'), x: 31, y: 49, w: 26, h: 26 },
     ],
     notes: [{ text: '// realistic ballistics', x: 224, y: 117, w: 59 }],
   },
@@ -24,7 +26,7 @@ export const PRODUCTS = [
     title: 'RPG-7',
     tagline: 'Master RPG-7 launcher safety',
     cardLine: 'Master RPG-7 launcher safety',
-    art: [{ src: '/products/cards/rpg-7.png', x: 23, y: 43, w: 261, h: 131 }],
+    art: [{ src: url('products/cards/rpg-7.png'), x: 23, y: 43, w: 261, h: 131 }],
     notes: [{ text: '// launcher simulation', x: 204, y: 43, w: 87 }],
   },
   {
@@ -35,8 +37,8 @@ export const PRODUCTS = [
     cardLine: 'Detect and counter FPV threats',
     art: [
       // A faint radar behind the drone, laid over the card in overlay mode.
-      { src: '/products/cards/fpv-drone-radar.png', x: 13, y: 98, w: 120, h: 115, overlay: true },
-      { src: '/products/cards/fpv-drone.png', x: 13, y: 26, w: 280, h: 159 },
+      { src: url('products/cards/fpv-drone-radar.png'), x: 13, y: 98, w: 120, h: 115, overlay: true },
+      { src: url('products/cards/fpv-drone.png'), x: 13, y: 26, w: 280, h: 159 },
     ],
     notes: [
       { text: '// threat detection', x: 234, y: 26, w: 59 },
@@ -49,7 +51,7 @@ export const PRODUCTS = [
     title: 'Duel: FPV vs GUN',
     tagline: 'VR training for FPV operators and shooters',
     cardLine: 'FPV operators vs shooters',
-    art: [{ src: '/products/cards/duel.png', x: 0, y: 21, w: 280, h: 179 }],
+    art: [{ src: url('products/cards/duel.png'), x: 0, y: 21, w: 280, h: 179 }],
     notes: [{ text: '// two perspectives one scenario', x: 9, y: 42, w: 89 }],
   },
 ]

@@ -1,13 +1,14 @@
 import { Headline } from './About'
 import { CtaButtons, HeroHeadline } from './Hero'
 import ProductMark from './ProductMark'
+import { url } from '../routes'
 
 // The first two screens on a phone, as in the mobile design: no animation and
 // no flight between them — two ordinary blocks, each with the soldier still.
 // Both pictures are frames of the same clip: the first (aiming) and the last
 // (standing square), from the light set made for phones.
-const AIMING = '/frames-sm/frame-000.webp'
-const STANDING = '/frames-sm/frame-060.webp'
+const AIMING = url('frames-sm/frame-000.webp')
+const STANDING = url('frames-sm/frame-060.webp')
 
 // Each frame is 800×494 with transparent margins around him. As in the mobile
 // design he fills the screen from edge to edge — the frame runs past both sides
