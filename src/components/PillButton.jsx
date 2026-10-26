@@ -15,21 +15,22 @@ const VARIANTS = {
 }
 
 // The design's small header button: label, then the arrow in a hairline ring.
+// Green on hover as in the design; pressed, the arrow steps 5px to the right.
 function MediumPillButton({ children, as: Tag, className, ...props }) {
   return (
     <Tag
       {...props}
-      className={`group inline-flex h-[38px] items-center rounded-full bg-ink py-1 pl-2 pr-[2.5px] text-[14px] font-light text-paper transition-colors duration-300 hover:bg-ink/90 ${className}`}
+      className={`group inline-flex h-[41px] items-center rounded-full bg-ink py-1 pl-2 pr-1 text-[14px] font-light text-paper transition-colors duration-300 hover:bg-[#c0ceac] hover:text-ink ${className}`}
     >
       <span className="px-2">{children}</span>
       <span
         aria-hidden="true"
-        className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full border-[0.5px] border-paper"
+        className="flex h-[33px] w-[33px] shrink-0 items-center justify-center rounded-full border-[0.5px] border-paper transition-colors duration-300 group-hover:border-ink"
       >
         <ArrowRightIcon
           width={24}
           height={24}
-          className="transition-transform duration-300 ease-out group-hover:translate-x-0.5"
+          className="transition-transform duration-200 ease-out group-active:translate-x-[5px]"
         />
       </span>
     </Tag>

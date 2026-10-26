@@ -168,7 +168,7 @@ export default function Header({ progress }) {
             {salesOpacity > 0 && (
               <div style={{ opacity: salesOpacity }} className="hidden lg:block">
                 <PillButton size="medium" href={CONTACT_PATH}>
-                  Talk to sales
+                  Talk To Sales
                 </PillButton>
               </div>
             )}

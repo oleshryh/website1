@@ -75,8 +75,9 @@ export default function Reticle() {
 
   if (!enabled) return null
 
-  const tick = 'absolute h-px w-[7px] bg-white'
-  const tickV = 'absolute h-[7px] w-px bg-white'
+  // Hairline ticks at half strength: present, but quieter than the content.
+  const tick = 'absolute h-[0.5px] w-[6px] bg-white/45'
+  const tickV = 'absolute h-[6px] w-[0.5px] bg-white/45'
 
   return (
     <div
@@ -94,7 +95,7 @@ export default function Reticle() {
         <span className={`${tickV} bottom-0 left-0`} />
         <span className={`${tick} bottom-0 right-0`} />
         <span className={`${tickV} bottom-0 right-0`} />
-        <span className="absolute left-1/2 top-1/2 h-px w-px -translate-x-1/2 -translate-y-1/2 bg-white" />
+        <span className="absolute left-1/2 top-1/2 h-px w-px -translate-x-1/2 -translate-y-1/2 bg-white/45" />
       </div>
     </div>
   )
