@@ -12,8 +12,8 @@ import Reticle from './components/Reticle'
 import SocialRail from './components/SocialRail'
 import SoldierScrollFigure from './components/SoldierScrollFigure'
 import TrustedBy from './components/TrustedBy'
-import { STAGE_STOPS, STAGE_VH } from './components/stage'
-import useScrollAutoAdvance from './components/useScrollAutoAdvance'
+import { STAGE_VH } from './components/stage'
+import useStageTurn from './components/useStageTurn'
 import useViewport from './components/useViewport'
 
 // Below this width the first two screens are the phone layout: still pictures
@@ -23,27 +23,27 @@ const PHONE_MAX = 767
 // Header and the first two screens on a computer or tablet.
 function StageIntro() {
   const stageRef = useRef(null)
-  // 0 on the first screen, 1 on the second: the soldier's clip and both
-  // screens' fades all read this one value.
   const { scrollYProgress } = useScroll({
     target: stageRef,
     offset: ['start start', 'end end'],
   })
-
-  useScrollAutoAdvance(stageRef, STAGE_STOPS)
+  // 0 on the first screen, 1 on the second: the soldier's clip and both
+  // screens' fades all read this one value, which plays out in time once the
+  // scroll has asked for a screen.
+  const turn = useStageTurn(scrollYProgress)
 
   return (
     <>
-      <Header progress={scrollYProgress} />
+      <Header progress={turn} />
 
-      {/* The first two screens are one pinned viewport that the scroll plays
-          through; after the second the page scrolls on normally. */}
+      {/* The first two screens are one pinned viewport; the scroll is never
+          held — past the pinned stretch the page carries on normally. */}
       <div ref={stageRef} className="relative" style={{ height: `${STAGE_VH}svh` }}>
         <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-canvas">
-          <HeroCallouts progress={scrollYProgress} />
-          <Hero progress={scrollYProgress} />
-          <About progress={scrollYProgress} />
-          <SoldierScrollFigure progress={scrollYProgress} />
+          <HeroCallouts progress={turn} />
+          <Hero progress={turn} />
+          <About progress={turn} />
+          <SoldierScrollFigure progress={turn} />
           <SocialRail />
         </div>
       </div>

@@ -1,15 +1,18 @@
-// The soldier's clip drives the first two screens. Screen 1 is its first frame,
-// screen 2 its last, where he stands square as in the design. After screen 2
-// the page scrolls on normally into the product cards.
+// The first two screens share one pinned viewport. The soldier's turn between
+// them is not scrubbed by the scroll: the scroll only decides which screen he
+// should be on, and he then plays the whole turn on his own — so he never
+// freezes halfway, while the page never holds the visitor back.
 export const FRAME_COUNT = 122
-const LAST_FRAME = FRAME_COUNT - 1
 
-// Scroll spent per frame of the clip.
-const FRAME_VH = 1.5
-const TO_SCREEN_2 = LAST_FRAME * FRAME_VH
+// How long the screen stays pinned after the first, in viewports. Enough to
+// take in the second screen when scrolling slowly; whoever keeps scrolling
+// simply carries on into the products while he finishes turning.
+const PINNED_VH = 100
+export const STAGE_VH = 100 + PINNED_VH
 
-// One viewport pinned, plus the transition between the two screens.
-export const STAGE_VH = 100 + TO_SCREEN_2
-
-// Module-level so the auto-advance effect isn't re-created every render.
-export const STAGE_STOPS = [0, 1]
+// The turn's length, first screen to second, and where along the pinned stretch
+// the scroll flips the target. The two thresholds differ so a scroll hovering
+// at the edge doesn't make him swing back and forth.
+export const TURN_SECONDS = 3
+export const TO_SECOND_AT = 0.04
+export const TO_FIRST_AT = 0.015
