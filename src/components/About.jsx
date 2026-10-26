@@ -91,8 +91,10 @@ export default function About({ progress }) {
   return (
     <section
       id="about"
-      style={{ opacity }}
-      className="pointer-events-none absolute inset-0"
+      // Takes the mouse only while it can be seen, so its text can be selected
+      // without the hidden screen ever catching a click meant for the first.
+      style={{ opacity, pointerEvents: opacity > 0 ? 'auto' : 'none' }}
+      className="absolute inset-0"
     >
       {stacked ? (
         // Above him, in the slot the first screen's copy just left.

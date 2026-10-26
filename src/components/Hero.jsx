@@ -196,8 +196,14 @@ export default function Hero({ progress }) {
   const textOpacity = useScrollFade(progress, [0.002, 0.06], [1, 0])
 
   return (
-    // The section covers the whole screen, so only its buttons take clicks.
-    <section id="top" className="pointer-events-none absolute inset-0">
+    // While its text is on screen it takes the mouse, so the text can be
+    // selected and copied; once faded it lets everything through to the
+    // second screen lying on top of it.
+    <section
+      id="top"
+      style={{ pointerEvents: textOpacity > 0 ? 'auto' : 'none' }}
+      className="absolute inset-0"
+    >
       <div ref={copyRef} className="absolute" style={copySlot(vw, vh)}>
         <div style={copyColumn(vw, vh)}>
           <div style={{ opacity: textOpacity }}>
@@ -205,10 +211,7 @@ export default function Hero({ progress }) {
           </div>
           {/* The second screen has no buttons of its own — the header's
               sales button takes over — so these leave with the text. */}
-          <div
-            style={{ opacity: textOpacity }}
-            className={textOpacity === 0 ? '' : 'pointer-events-auto'}
-          >
+          <div style={{ opacity: textOpacity }}>
             <CtaButtons />
           </div>
         </div>
@@ -219,7 +222,7 @@ export default function Hero({ progress }) {
       {clearsFigure(box, vw, QUOTE_WIDTH) && (
         <blockquote
           style={{ opacity: textOpacity, width: QUOTE_WIDTH }}
-          className="pointer-events-none absolute bottom-6 right-6 hidden text-right text-[16px] font-light leading-[1.2] text-muted lg:block"
+          className="absolute bottom-6 right-6 hidden text-right text-[16px] font-light leading-[1.2] text-muted lg:block"
         >
           {t({
             en: '"The future of professional training begins with technology that transforms virtual scenarios into real experience."',
