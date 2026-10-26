@@ -35,6 +35,7 @@ function MobileHero() {
         <img
           src={AIMING}
           alt="ATMARAKSI VR training soldier"
+          fetchPriority="high"
           className="absolute bottom-0 left-1/2 h-full w-auto max-w-none -translate-x-1/2 select-none"
           style={{ maxHeight: FRAME_HEIGHT }}
           draggable={false}

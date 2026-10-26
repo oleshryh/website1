@@ -43,6 +43,9 @@ export default function SoldierScrollFigure({ progress }) {
             src={clip.src}
             alt="ATMARAKSI VR training soldier"
             decoding="sync"
+            // Ahead of the 121 frames being warmed up behind it, so he shows
+            // on the first screen without waiting for the whole clip.
+            fetchPriority="high"
             className="h-full w-full select-none object-contain"
             draggable={false}
           />
