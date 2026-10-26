@@ -76,7 +76,7 @@ export function CtaButtons() {
         type="button"
         ref={demoRef}
         onClick={openDemo}
-        className="px-6 text-[16px] font-light underline underline-offset-4 transition-colors hover:text-[#929292] lg:text-[18px]"
+        className="px-3 text-[16px] font-light underline underline-offset-4 transition-colors hover:text-[#929292] lg:px-6 lg:text-[18px]"
       >
         View Demo
       </button>

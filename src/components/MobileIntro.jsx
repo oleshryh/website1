@@ -9,10 +9,11 @@ import ProductMark from './ProductMark'
 const AIMING = '/frames-sm/frame-000.webp'
 const STANDING = '/frames-sm/frame-060.webp'
 
-// Each frame is 800×494 with transparent margins around him. Sized so that,
-// as in the mobile design, he fills the screen from edge to edge — the frame
-// itself runs past both sides and is cut off by the section.
-const FRAME_WIDTH = 'calc((100vw - 24px) / 0.57)'
+// Each frame is 800×494 with transparent margins around him. As in the mobile
+// design he fills the screen from edge to edge — the frame runs past both sides
+// and is cut off by the section. On a short phone that would put him over the
+// buttons, so he is never taller than the room left under them.
+const FRAME_HEIGHT = 'calc((100vw - 24px) / 0.57 * 494 / 800)'
 
 const CALLOUTS = [
   ['Digital', 'Environment'],
@@ -22,19 +23,22 @@ const CALLOUTS = [
 
 function MobileHero() {
   return (
-    // One screen tall, the soldier standing on its bottom edge.
-    <section id="top" className="relative h-[100svh] min-h-[600px] overflow-hidden bg-canvas">
-      <div className="relative z-10 px-3 pt-[147px]">
+    // One screen tall: the copy under the header, the soldier standing on the
+    // bottom edge in whatever height is left.
+    <section id="top" className="flex h-[100svh] flex-col overflow-hidden bg-canvas">
+      <div className="px-3 pt-[147px]">
         <HeroHeadline />
         <CtaButtons />
       </div>
-      <img
-        src={AIMING}
-        alt="ATMARAKSI VR training soldier"
-        className="absolute bottom-0 left-1/2 max-w-none -translate-x-1/2 select-none"
-        style={{ width: FRAME_WIDTH }}
-        draggable={false}
-      />
+      <div className="relative mt-4 min-h-0 flex-1">
+        <img
+          src={AIMING}
+          alt="ATMARAKSI VR training soldier"
+          className="absolute bottom-0 left-1/2 h-full w-auto max-w-none -translate-x-1/2 select-none"
+          style={{ maxHeight: FRAME_HEIGHT }}
+          draggable={false}
+        />
+      </div>
     </section>
   )
 }

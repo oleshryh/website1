@@ -1,9 +1,39 @@
+import { useEffect, useRef, useState } from 'react'
 import { PRODUCTS } from '../data/products'
 import { ArrowRightIcon } from './icons'
 import ProductMark from './ProductMark'
 
 // The design's hover green, shared by everything on a card.
 const HOVER_TEXT = 'transition-colors duration-300 group-hover:text-[#32471f]'
+
+// The picture area is drawn at the design's 295×220. On a card narrower than
+// that (a small phone) the whole picture shrinks to fit instead of spilling out.
+const ART_W = 295
+const ART_H = 220
+
+function ArtBox({ children }) {
+  const ref = useRef(null)
+  const [scale, setScale] = useState(1)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return undefined
+    const observer = new ResizeObserver(() => setScale(Math.min(1, el.clientWidth / ART_W)))
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <div ref={ref} className="mx-auto w-full max-w-[295px] shrink-0" style={{ height: ART_H * scale }}>
+      <div
+        className="relative origin-top-left"
+        style={{ width: ART_W, height: ART_H, transform: `scale(${scale})` }}
+      >
+        {children}
+      </div>
+    </div>
+  )
+}
 
 function ProductCard({ slug, number, title, cardLine, art, notes }) {
   return (
@@ -25,7 +55,7 @@ function ProductCard({ slug, number, title, cardLine, art, notes }) {
 
       {/* The picture is laid out at the design's 295×220 and steps 8px left on
           hover, as in the hover variant. */}
-      <div className="relative mx-auto h-[220px] w-[295px] shrink-0">
+      <ArtBox>
         <div className="absolute inset-0 transition-transform duration-500 ease-out group-hover:-translate-x-2">
           {art.map(({ src, x, y, w, h, overlay }) => (
             <img
@@ -48,7 +78,7 @@ function ProductCard({ slug, number, title, cardLine, art, notes }) {
             </span>
           ))}
         </div>
-      </div>
+      </ArtBox>
 
       <div className="mt-auto flex items-center justify-between">
         <span className={`text-[12px] uppercase text-muted ${HOVER_TEXT}`}>

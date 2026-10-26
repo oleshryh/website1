@@ -43,9 +43,11 @@ function PromoBar() {
       className="group relative flex h-[30px] w-full items-center justify-center gap-3 overflow-hidden rounded-t-3xl rounded-b-lg bg-gradient-to-r from-[#797973] to-[#7f7f7a] px-2.5 text-[11px] font-light leading-[18px] text-paper sm:text-[12px]"
     >
       <span className="promo-gradient pointer-events-none absolute inset-0" />
-      <span className="relative">Realistic training without live ammunition</span>
-      <span aria-hidden="true" className="relative h-0.5 w-0.5 rounded-full bg-paper" />
-      <span className="relative flex items-center gap-1 font-medium">
+      <span className="relative whitespace-nowrap max-[359px]:hidden">
+        Realistic training without live ammunition
+      </span>
+      <span aria-hidden="true" className="relative h-0.5 w-0.5 rounded-full bg-paper max-[359px]:hidden" />
+      <span className="relative flex items-center gap-1 whitespace-nowrap font-medium">
         Download PDF
         <ArrowUpRightIcon
           width={12}
