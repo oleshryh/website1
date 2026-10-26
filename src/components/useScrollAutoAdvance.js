@@ -18,6 +18,10 @@ const MS_PER_VIEWPORT = 1700
 // inertia, or a run of notches). Only after a pause this long does the wheel
 // count as a new push.
 const GESTURE_GAP_MS = 200
+// The gesture that was running at the landing is swallowed for at most this
+// long. Someone who simply keeps scrolling never pauses, and without a cap
+// they would be held on the screen for good.
+const LANDING_HOLD_MS = 700
 // Treat "still parked at a stop" generously — a pixel or two of rubber banding
 // shouldn't count as having scrolled away.
 const END_SLACK = 4
@@ -48,6 +52,7 @@ export default function useScrollAutoAdvance(stageRef, stops = [0, 1]) {
     // While set, the wheel is swallowed: during a flight, and after one until
     // the gesture that was still running at the landing has died away.
     let holding = false
+    let landedAt = 0
     let lastWheelAt = 0
     // What moved the page last — touch scrolling is left alone until it stops.
     let lastInput = 'wheel'
@@ -83,7 +88,12 @@ export default function useScrollAutoAdvance(stageRef, stops = [0, 1]) {
         const t = Math.min(1, (now - started) / duration)
         window.scrollTo(0, from + (to - from) * easeInOutSine(t))
         lastY = window.scrollY
-        frame = t < 1 ? requestAnimationFrame(step) : null
+        if (t < 1) {
+          frame = requestAnimationFrame(step)
+        } else {
+          frame = null
+          landedAt = now
+        }
       }
       frame = requestAnimationFrame(step)
     }
@@ -111,8 +121,8 @@ export default function useScrollAutoAdvance(stageRef, stops = [0, 1]) {
       }
 
       // Just landed and the same gesture is still coming in: keep the page on
-      // the screen it arrived at.
-      if (holding && sameGesture) {
+      // the screen it arrived at — for a moment, not for good.
+      if (holding && sameGesture && now - landedAt < LANDING_HOLD_MS) {
         if (event.cancelable) event.preventDefault()
         return
       }
