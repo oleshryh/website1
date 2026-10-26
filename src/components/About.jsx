@@ -26,8 +26,10 @@ export default function About({ progress }) {
   const stacked = view(vw, vh) === 'stacked'
   const copyRef = useRef(null)
   useReportCopyHeight('about', copyRef, stacked)
-  // Fades in only after the first screen's copy is fully gone at 0.3.
-  const opacity = useScrollFade(progress, [0.42, 0.55], [0, 1])
+  // Fades in once the first screen's copy is gone (0.06): about 0.9–1.3s into
+  // the flight. The flight's sine curve moves slowly at its ends, so these
+  // numbers sit low to land early in time.
+  const opacity = useScrollFade(progress, [0.13, 0.26], [0, 1])
 
   return (
     <section

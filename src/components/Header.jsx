@@ -98,7 +98,7 @@ export default function Header({ progress }) {
   const [productsOpen, setProductsOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const closeTimer = useRef(null)
-  const salesOpacity = useScrollFade(progress ?? NO_PROGRESS, [0.3, 0.45], [0, 1])
+  const salesOpacity = useScrollFade(progress ?? NO_PROGRESS, [0.13, 0.26], [0, 1])
 
   const showProducts = () => {
     clearTimeout(closeTimer.current)

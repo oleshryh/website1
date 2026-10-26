@@ -114,7 +114,7 @@ const CALLOUTS = [
 
 // Rendered under the figure so the leader lines disappear behind the soldier.
 export function HeroCallouts({ progress }) {
-  const opacity = useScrollFade(progress, [0, 0.08], [1, 0])
+  const opacity = useScrollFade(progress, [0, 0.04], [1, 0])
 
   const { w: vw, h: vh } = useViewport()
   const box = figureBox(vw, vh)
@@ -155,9 +155,9 @@ export default function Hero({ progress }) {
   const box = figureBox(vw, vh)
   const copyRef = useRef(null)
   useReportCopyHeight('hero', copyRef)
-  // Headline block, buttons and quote fade together, well before the second
-  // screen arrives.
-  const textOpacity = useScrollFade(progress, [0.12, 0.3], [1, 0])
+  // Headline block, buttons and quote fade together the moment the flight
+  // starts — gone within about half a second.
+  const textOpacity = useScrollFade(progress, [0.002, 0.06], [1, 0])
 
   return (
     // The section covers the whole screen, so only its buttons take clicks.
