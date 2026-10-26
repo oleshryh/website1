@@ -13,7 +13,7 @@ import { useEffect } from 'react'
 //
 // Timed by distance rather than a flat duration: the figure's animation is tied
 // to scroll position, so this keeps him at one pace however far the flight is.
-const MS_PER_VIEWPORT = 2200
+const MS_PER_VIEWPORT = 1700
 // Wheel events closer together than this belong to one gesture (a flick and its
 // inertia, or a run of notches). Only after a pause this long does the wheel
 // count as a new push.
