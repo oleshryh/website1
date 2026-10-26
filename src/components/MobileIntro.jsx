@@ -45,7 +45,7 @@ function MobileHero() {
 
 function MobileAbout() {
   return (
-    <section id="about" className="bg-canvas px-3 pb-16">
+    <section id="about" className="scroll-mt-[130px] bg-canvas px-3 pb-16">
       <ul className="grid h-[62px] grid-cols-3 items-center rounded-lg bg-paper text-center text-[12px] uppercase leading-[1.2]">
         {CALLOUTS.map(([title, subtitle], i) => (
           <li key={title} className={i > 0 ? 'border-l-[0.5px] border-muted/40' : ''}>

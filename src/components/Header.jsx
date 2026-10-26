@@ -1,21 +1,26 @@
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { AnimatePresence, motion, motionValue } from 'framer-motion'
 import { PRODUCTS } from '../data/products'
+import { SOCIALS } from '../data/socials'
 import { CONTACT_PATH } from '../routes'
 import { ArrowUpRightIcon, ChevronDownIcon } from './icons'
 import PillButton from './PillButton'
 import ProductMark from './ProductMark'
+import { SocialButton } from './SocialRail'
 import useScrollFade from './useScrollFade'
 
 const LANGUAGES = ['UA', 'EN']
 const NO_PROGRESS = motionValue(0)
 
-function LanguageSwitcher() {
+function LanguageSwitcher({ show }) {
   // Visual only for now — no translation wired up yet.
   const [lang, setLang] = useState('EN')
 
   return (
-    <div className="hidden h-[41px] items-center gap-1 rounded bg-paper p-1 sm:flex">
+    <div
+      className={`h-[41px] items-center gap-1 rounded bg-paper p-1 sm:flex ${show ? 'flex' : 'hidden'}`}
+    >
       {LANGUAGES.map((code) => {
         const active = code === lang
         return (
@@ -69,6 +74,61 @@ function MenuIcon({ open }) {
         strokeLinecap="round"
       />
     </svg>
+  )
+}
+
+const PHONE_LINKS = [
+  { label: 'Home', href: '/#top' },
+  { label: 'Products', href: '/#products' },
+  { label: 'About Us', href: '/#about' },
+  { label: 'Support', href: CONTACT_PATH },
+]
+
+// The phone menu from the design: the page dims and blurs behind, the header
+// stays on top, and the links stand large down the left with the socials under
+// them. The page underneath doesn't scroll while it is open.
+function PhoneMenu({ open, onClose }) {
+  useEffect(() => {
+    if (!open) return undefined
+    const previous = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = previous
+    }
+  }, [open])
+
+  return createPortal(
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          key="phone-menu"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.25, ease: 'easeOut' }}
+          className="fixed inset-0 z-40 bg-canvas/95 px-3 pt-[159px] backdrop-blur-[20px] lg:hidden"
+        >
+          <nav className="flex flex-col items-start gap-5">
+            {PHONE_LINKS.map(({ label, href }) => (
+              <a
+                key={label}
+                href={href}
+                onClick={onClose}
+                className="text-[32px] font-thin leading-[39px] text-ink"
+              >
+                {label}
+              </a>
+            ))}
+          </nav>
+          <div className="mt-16 flex gap-3">
+            {SOCIALS.map((social) => (
+              <SocialButton key={social.label} {...social} size="large" />
+            ))}
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>,
+    document.body,
   )
 }
 
@@ -164,7 +224,7 @@ export default function Header({ progress }) {
           </nav>
 
           <div className="col-start-3 flex items-center gap-3 justify-self-end">
-            <LanguageSwitcher />
+            <LanguageSwitcher show={menuOpen} />
             {/* Out of the row entirely while hidden, so on the first screen the
                 language switch stands at the right edge as in the design. */}
             {salesOpacity > 0 && (
@@ -187,49 +247,6 @@ export default function Header({ progress }) {
         </div>
 
         <AnimatePresence initial={false}>
-          {menuOpen && (
-            <motion.div
-              key="mobile-menu"
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{
-                height: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
-                opacity: { duration: 0.25, ease: 'easeOut' },
-              }}
-              className="lg:hidden"
-            >
-              <nav className="flex flex-col gap-1 px-3 pb-3 text-sm text-ink/70">
-                <a href="/#top" className="rounded-lg px-3 py-2.5 hover:bg-ink/[0.05]">
-                  Home
-                </a>
-                <a href="/#about" className="rounded-lg px-3 py-2.5 hover:bg-ink/[0.05]">
-                  About Us
-                </a>
-                <p className="px-3 pb-1 pt-3 text-xs uppercase tracking-wide text-ink/35">
-                  Products
-                </p>
-                {PRODUCTS.map(({ slug, title }) => (
-                  <a
-                    key={slug}
-                    href={`/products/${slug}`}
-                    className="rounded-lg px-3 py-2.5 text-ink hover:bg-ink/[0.05]"
-                  >
-                    {title}
-                  </a>
-                ))}
-                <a
-                  href={CONTACT_PATH}
-                  className="mt-3 rounded-lg px-3 py-2.5 hover:bg-ink/[0.05]"
-                >
-                  Support
-                </a>
-              </nav>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <AnimatePresence initial={false}>
           {productsOpen && (
             <motion.div
               key="products-panel"
@@ -250,6 +267,7 @@ export default function Header({ progress }) {
           )}
         </AnimatePresence>
       </div>
+      <PhoneMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
     </header>
   )
 }

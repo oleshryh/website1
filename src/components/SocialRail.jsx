@@ -1,12 +1,15 @@
 import { SOCIALS } from '../data/socials'
 
-// One square button from the design, shared with the footer.
-export function SocialButton({ Icon, label, href }) {
+// One square button from the design, shared with the footer and the phone
+// menu, where the design draws it larger.
+export function SocialButton({ Icon, label, href, size }) {
   return (
     <a
       href={href}
       aria-label={label}
-      className="flex h-9 w-9 items-center justify-center rounded bg-paper text-ink transition-shadow duration-200 hover:shadow-[2px_4px_4px_rgba(69,69,69,0.1)]"
+      className={`flex items-center justify-center rounded bg-paper text-ink transition-shadow duration-200 hover:shadow-[2px_4px_4px_rgba(69,69,69,0.1)] ${
+        size === 'large' ? 'h-11 w-11' : 'h-9 w-9'
+      }`}
     >
       <Icon width={24} height={24} />
     </a>
