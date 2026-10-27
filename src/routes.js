@@ -9,3 +9,13 @@ const BASE = import.meta.env.BASE_URL
 export const url = (path = '') => BASE + path.replace(/^\//, '')
 
 export const CONTACT_PATH = url('contact')
+export const PRIVACY_PATH = url('privacy-policy')
+export const productPath = (slug) => url(`products/${slug}`)
+
+// The page's own path, without the site's folder and any trailing slash —
+// what main.jsx matches against.
+export function currentPath() {
+  const path = window.location.pathname.replace(/\/$/, '')
+  const base = BASE.replace(/\/$/, '')
+  return path.startsWith(base) ? path.slice(base.length) || '/' : path
+}

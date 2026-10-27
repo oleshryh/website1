@@ -34,9 +34,18 @@ React 19 + Vite 8 (сборщик) + Tailwind CSS 4 (стили) + framer-motion
 | 6 | `Details.jsx` | Чёрный блок «Ready to discuss the details?» с кнопкой на страницу заявки |
 | 7 | `Footer.jsx` | Подвал: логотип, соцсети, три колонки ссылок, большое слово ATMARAKSI (`public/brand/footer-wordmark.svg`) |
 
-Все кнопки «Talk to sales» и пункт меню Support ведут на отдельную страницу с
-формой заявки — `/contact` (`ContactPage.jsx`). Роутера нет: страницу выбирает
-`src/main.jsx` по адресу, адреса страниц лежат в `src/routes.js`. Заявка
+Страницы (роутера нет: страницу выбирает `src/main.jsx` по адресу, адреса —
+в `src/routes.js`, функция `currentPath()` убирает папку `/website1/`):
+
+| Адрес | Компонент | Что там |
+| --- | --- | --- |
+| `/` | `App.jsx` | Главная |
+| `/contact` | `ContactPage.jsx` | Форма заявки; сюда ведут все «Talk to sales» и Support |
+| `/privacy-policy` | `PrivacyPage.jsx` | Политика конфиденциальности, тексты — `src/data/privacy.js` |
+| `/products/<slug>` | `ProductPage.jsx` | Заглушка товара: название, строка, крупная картинка, кнопка |
+
+Под формой заявки — ссылка на политику конфиденциальности, в подвале на неё
+ведёт «Legal». Заявка
 уходит через `src/data/submitLead.js` — пока адреса для заявок нет, форма
 только показывает «Request received.».
 

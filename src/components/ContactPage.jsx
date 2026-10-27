@@ -5,7 +5,7 @@ import { useT } from '../i18n'
 import Footer from './Footer'
 import Header from './Header'
 import PillButton from './PillButton'
-import { url } from '../routes'
+import { PRIVACY_PATH, url } from '../routes'
 
 // The request form every "talk to sales" leads to. The design has no page for
 // it, so it borrows the home page's pieces: the same header and footer, the
@@ -136,6 +136,17 @@ function RequestForm() {
           ? t({ en: 'Sending', ua: 'Надсилаємо' })
           : t({ en: 'Send Request', ua: 'Надіслати заявку' })}
       </PillButton>
+
+      <p className="text-[12px] font-light text-muted">
+        {t({
+          en: 'By sending the request you agree to our ',
+          ua: 'Надсилаючи заявку, ви погоджуєтеся з нашою ',
+        })}
+        <a href={PRIVACY_PATH} className="underline underline-offset-2 hover:text-ink">
+          {t({ en: 'privacy policy', ua: 'політикою конфіденційності' })}
+        </a>
+        .
+      </p>
     </form>
   )
 }

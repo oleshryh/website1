@@ -2,32 +2,34 @@ import { NAV } from '../data/copy'
 import { PRODUCTS } from '../data/products'
 import { SOCIALS } from '../data/socials'
 import { useT } from '../i18n'
-import { url } from '../routes'
+import { CONTACT_PATH, PRIVACY_PATH, productPath, url } from '../routes'
 import { SocialButton } from './SocialRail'
 
 // Links to pages that don't exist yet point nowhere for now.
+const NOWHERE = '#'
+
 const COLUMNS = [
   {
     title: NAV.products,
-    links: PRODUCTS.map(({ slug, title }) => ({ label: title, href: url(`products/${slug}`) })),
+    links: PRODUCTS.map(({ slug, title }) => ({ label: title, href: productPath(slug) })),
   },
   {
     title: { en: 'Resources', ua: 'Ресурси' },
     links: [
-      { en: 'Documentation', ua: 'Документація' },
-      NAV.support,
-      { en: 'Jobs', ua: 'Вакансії' },
-      { en: 'Legal', ua: 'Правова інформація' },
-    ].map((label) => ({ label, href: '#' })),
+      { label: { en: 'Documentation', ua: 'Документація' }, href: NOWHERE },
+      { label: NAV.support, href: CONTACT_PATH },
+      { label: { en: 'Jobs', ua: 'Вакансії' }, href: NOWHERE },
+      { label: { en: 'Legal', ua: 'Правова інформація' }, href: PRIVACY_PATH },
+    ],
   },
   {
     title: { en: 'Company', ua: 'Компанія' },
     links: [
-      { en: 'About', ua: 'Про нас' },
-      { en: 'Case Studies', ua: 'Кейси' },
-      { en: 'Gallery', ua: 'Галерея' },
-      { en: 'Blog', ua: 'Блог' },
-    ].map((label) => ({ label, href: '#' })),
+      { label: { en: 'About', ua: 'Про нас' }, href: url('#about') },
+      { label: { en: 'Case Studies', ua: 'Кейси' }, href: NOWHERE },
+      { label: { en: 'Gallery', ua: 'Галерея' }, href: NOWHERE },
+      { label: { en: 'Blog', ua: 'Блог' }, href: NOWHERE },
+    ],
   },
 ]
 

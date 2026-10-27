@@ -5,7 +5,7 @@ import { NAV, TALK_TO_SALES } from '../data/copy'
 import { PRODUCTS } from '../data/products'
 import { SOCIALS } from '../data/socials'
 import { LANGUAGES, useLang, useT } from '../i18n'
-import { CONTACT_PATH, url } from '../routes'
+import { CONTACT_PATH, productPath, url } from '../routes'
 import { ArrowUpRightIcon, ChevronDownIcon } from './icons'
 import PillButton from './PillButton'
 import ProductMark from './ProductMark'
@@ -138,7 +138,7 @@ function ProductCard({ slug, title, tagline }) {
   const t = useT()
   return (
     <a
-      href={url(`products/${slug}`)}
+      href={productPath(slug)}
       className="group flex h-[128px] flex-col justify-between rounded-lg bg-[#ececec] p-[18px] transition-colors duration-300 hover:bg-[#c3d1b3]"
     >
       <ProductMark

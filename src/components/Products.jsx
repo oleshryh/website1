@@ -3,30 +3,35 @@ import { PRODUCTS } from '../data/products'
 import { useT } from '../i18n'
 import { ArrowRightIcon } from './icons'
 import ProductMark from './ProductMark'
-import { url } from '../routes'
+import { productPath } from '../routes'
 
 // The design's hover green, shared by everything on a card.
 const HOVER_TEXT = 'transition-colors duration-300 group-hover:text-[#32471f]'
 
 // The picture area is drawn at the design's 295×220. On a card narrower than
-// that (a small phone) the whole picture shrinks to fit instead of spilling out.
+// that (a small phone) the whole picture shrinks to fit instead of spilling out;
+// `grow` lets a bigger frame (the product page) scale it up to that many times.
 const ART_W = 295
 const ART_H = 220
 
-function ArtBox({ children }) {
+function ArtBox({ children, grow = 1 }) {
   const ref = useRef(null)
   const [scale, setScale] = useState(1)
 
   useEffect(() => {
     const el = ref.current
     if (!el) return undefined
-    const observer = new ResizeObserver(() => setScale(Math.min(1, el.clientWidth / ART_W)))
+    const observer = new ResizeObserver(() => setScale(Math.min(grow, el.clientWidth / ART_W)))
     observer.observe(el)
     return () => observer.disconnect()
-  }, [])
+  }, [grow])
 
   return (
-    <div ref={ref} className="mx-auto w-full min-w-0 max-w-[295px] shrink-0" style={{ height: ART_H * scale }}>
+    <div
+      ref={ref}
+      className="mx-auto w-full min-w-0 shrink-0"
+      style={{ maxWidth: ART_W * grow, height: ART_H * scale }}
+    >
       <div
         className="relative origin-top-left"
         style={{ width: ART_W, height: ART_H, transform: `scale(${scale})` }}
@@ -37,11 +42,43 @@ function ArtBox({ children }) {
   )
 }
 
+// A product's picture with its small notes, laid out at the design's 295×220.
+// Inside a card it steps 8px left on hover, as in the hover variant.
+export function ProductArt({ art, notes, grow }) {
+  const t = useT()
+  return (
+    <ArtBox grow={grow}>
+      <div className="absolute inset-0 transition-transform duration-500 ease-out group-hover:-translate-x-2">
+        {art.map(({ src, x, y, w, h, overlay }) => (
+          <img
+            key={src}
+            src={src}
+            alt=""
+            loading="lazy"
+            className={`absolute select-none ${overlay ? 'mix-blend-overlay' : ''}`}
+            style={{ left: x, top: y, width: w, height: h }}
+            draggable={false}
+          />
+        ))}
+        {notes.map(({ text, x, y, w }) => (
+          <span
+            key={`${x},${y}`}
+            className={`absolute text-[8px] uppercase leading-[1.2] text-muted ${HOVER_TEXT}`}
+            style={{ left: x, top: y, width: w }}
+          >
+            {t(text)}
+          </span>
+        ))}
+      </div>
+    </ArtBox>
+  )
+}
+
 function ProductCard({ slug, number, title, cardLine, art, notes }) {
   const t = useT()
   return (
     <a
-      href={url(`products/${slug}`)}
+      href={productPath(slug)}
       className="group flex h-[470px] flex-col gap-8 rounded-xl bg-canvas px-[18px] py-6 transition-colors duration-300 hover:bg-[#c0ceac]"
     >
       <div className="flex items-center justify-between">
@@ -56,32 +93,7 @@ function ProductCard({ slug, number, title, cardLine, art, notes }) {
         <p className={`text-[16px] text-muted ${HOVER_TEXT}`}>{t(cardLine)}</p>
       </div>
 
-      {/* The picture is laid out at the design's 295×220 and steps 8px left on
-          hover, as in the hover variant. */}
-      <ArtBox>
-        <div className="absolute inset-0 transition-transform duration-500 ease-out group-hover:-translate-x-2">
-          {art.map(({ src, x, y, w, h, overlay }) => (
-            <img
-              key={src}
-              src={src}
-              alt=""
-              loading="lazy"
-              className={`absolute select-none ${overlay ? 'mix-blend-overlay' : ''}`}
-              style={{ left: x, top: y, width: w, height: h }}
-              draggable={false}
-            />
-          ))}
-          {notes.map(({ text, x, y, w }) => (
-            <span
-              key={`${x},${y}`}
-              className={`absolute text-[8px] uppercase leading-[1.2] text-muted ${HOVER_TEXT}`}
-              style={{ left: x, top: y, width: w }}
-            >
-              {t(text)}
-            </span>
-          ))}
-        </div>
-      </ArtBox>
+      <ProductArt art={art} notes={notes} />
 
       <div className="mt-auto flex items-center justify-between">
         <span className={`text-[12px] uppercase text-muted ${HOVER_TEXT}`}>
