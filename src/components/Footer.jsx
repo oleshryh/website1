@@ -2,11 +2,18 @@ import { NAV } from '../data/copy'
 import { PRODUCTS } from '../data/products'
 import { SOCIALS } from '../data/socials'
 import { useT } from '../i18n'
-import { CONTACT_PATH, PRIVACY_PATH, productPath, url } from '../routes'
+import {
+  BLOG_PATH,
+  CASES_PATH,
+  CONTACT_PATH,
+  DOCS_PATH,
+  GALLERY_PATH,
+  JOBS_PATH,
+  PRIVACY_PATH,
+  productPath,
+  url,
+} from '../routes'
 import { SocialButton } from './SocialRail'
-
-// Links to pages that don't exist yet point nowhere for now.
-const NOWHERE = '#'
 
 const COLUMNS = [
   {
@@ -16,9 +23,9 @@ const COLUMNS = [
   {
     title: { en: 'Resources', ua: 'Ресурси' },
     links: [
-      { label: { en: 'Documentation', ua: 'Документація' }, href: NOWHERE },
+      { label: { en: 'Documentation', ua: 'Документація' }, href: DOCS_PATH },
       { label: NAV.support, href: CONTACT_PATH },
-      { label: { en: 'Jobs', ua: 'Вакансії' }, href: NOWHERE },
+      { label: { en: 'Jobs', ua: 'Вакансії' }, href: JOBS_PATH },
       { label: { en: 'Legal', ua: 'Правова інформація' }, href: PRIVACY_PATH },
     ],
   },
@@ -26,9 +33,9 @@ const COLUMNS = [
     title: { en: 'Company', ua: 'Компанія' },
     links: [
       { label: { en: 'About', ua: 'Про нас' }, href: url('#about') },
-      { label: { en: 'Case Studies', ua: 'Кейси' }, href: NOWHERE },
-      { label: { en: 'Gallery', ua: 'Галерея' }, href: NOWHERE },
-      { label: { en: 'Blog', ua: 'Блог' }, href: NOWHERE },
+      { label: { en: 'Case Studies', ua: 'Кейси' }, href: CASES_PATH },
+      { label: { en: 'Gallery', ua: 'Галерея' }, href: GALLERY_PATH },
+      { label: { en: 'Blog', ua: 'Блог' }, href: BLOG_PATH },
     ],
   },
 ]

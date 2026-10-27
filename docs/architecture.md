@@ -43,6 +43,15 @@ React 19 + Vite 8 (сборщик) + Tailwind CSS 4 (стили) + framer-motion
 | `/contact` | `ContactPage.jsx` | Форма заявки; сюда ведут все «Talk to sales» и Support |
 | `/privacy-policy` | `PrivacyPage.jsx` | Политика конфиденциальности, тексты — `src/data/privacy.js` |
 | `/products/<slug>` | `ProductPage.jsx` | Заглушка товара: название, строка, крупная картинка, кнопка |
+| `/docs` | `DocsPage.jsx` | Документация — разделы-заглушки, `src/data/docs.js` |
+| `/jobs` | `JobsPage.jsx` | Вакансии строками, раскрываются по нажатию, `src/data/jobs.js` |
+| `/cases`, `/cases/<slug>` | `CasesPage.jsx` | Кейсы клиентов карточками и статьями, `src/data/cases.js` |
+| `/gallery` | `GalleryPage.jsx` | Галерея: фильтры, плитки, просмотр на весь экран, `src/data/gallery.js` |
+| `/blog`, `/blog/<slug>` | `BlogPage.jsx` | Блог: свежая новость крупно, остальные карточками, `src/data/blog.js` |
+
+Внутренние страницы собраны из общих частей: `PageShell.jsx` (шапка, заголовок
+блока в стиле главной, подвал), `ArticlePage.jsx` (длинная статья — общая для
+кейсов и новостей), `Cover.jsx` (обложка). Текст-заглушка — `src/data/lorem.js`.
 
 Под формой заявки — ссылка на политику конфиденциальности, в подвале на неё
 ведёт «Legal». Заявка

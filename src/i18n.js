@@ -19,3 +19,15 @@ export function useT() {
     return lang === 'UA' ? value.ua : value.en
   }
 }
+
+// Dates written the way each language writes them: "14 October 2026" /
+// "14 жовтня 2026 р.".
+export function useFormatDate() {
+  const { lang } = useLang()
+  return (iso) =>
+    new Intl.DateTimeFormat(lang === 'UA' ? 'uk-UA' : 'en-GB', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    }).format(new Date(iso))
+}
