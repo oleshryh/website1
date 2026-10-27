@@ -5,7 +5,7 @@ import { NAV, TALK_TO_SALES } from '../data/copy'
 import { PRODUCTS } from '../data/products'
 import { SOCIALS } from '../data/socials'
 import { LANGUAGES, useLang, useT } from '../i18n'
-import { CONTACT_PATH, productPath, url } from '../routes'
+import { CONTACT_PATH, productPath, SUPPORT_PATH, url } from '../routes'
 import { ArrowUpRightIcon, ChevronDownIcon } from './icons'
 import PillButton from './PillButton'
 import ProductMark from './ProductMark'
@@ -82,7 +82,7 @@ const PHONE_LINKS = [
   { label: NAV.home, href: url('#top') },
   { label: NAV.products, href: url('#products') },
   { label: NAV.about, href: url('#about') },
-  { label: NAV.support, href: CONTACT_PATH },
+  { label: NAV.support, href: SUPPORT_PATH },
 ]
 
 // The phone menu from the design: the page dims and blurs behind, the header
@@ -223,7 +223,7 @@ export default function Header({ progress }) {
               {t(NAV.about)}
             </a>
             <a
-              href={CONTACT_PATH}
+              href={SUPPORT_PATH}
               onMouseEnter={hideProducts}
               className="transition-opacity hover:opacity-60"
             >

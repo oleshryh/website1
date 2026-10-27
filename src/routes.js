@@ -9,6 +9,7 @@ const BASE = import.meta.env.BASE_URL
 export const url = (path = '') => BASE + path.replace(/^\//, '')
 
 export const CONTACT_PATH = url('contact')
+export const SUPPORT_PATH = url('support')
 export const PRIVACY_PATH = url('privacy-policy')
 export const DOCS_PATH = url('docs')
 export const JOBS_PATH = url('jobs')

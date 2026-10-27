@@ -40,7 +40,8 @@ React 19 + Vite 8 (сборщик) + Tailwind CSS 4 (стили) + framer-motion
 | Адрес | Компонент | Что там |
 | --- | --- | --- |
 | `/` | `App.jsx` | Главная |
-| `/contact` | `ContactPage.jsx` | Форма заявки; сюда ведут все «Talk to sales» и Support |
+| `/contact` | `ContactPage.jsx` | «Talk to sales» — форма заявки; сюда ведут все кнопки «Talk to sales» |
+| `/support` | `SupportPage.jsx` | Поддержка: частые вопросы (`src/data/faq.js`), мини-форма вопроса, блок «Залишились питання? Телефонуйте» |
 | `/privacy-policy` | `PrivacyPage.jsx` | Политика конфиденциальности, тексты — `src/data/privacy.js` |
 | `/products/<slug>` | `ProductPage.jsx` | Заглушка товара: название, строка, крупная картинка, кнопка |
 | `/docs` | `DocsPage.jsx` | Документация — разделы-заглушки, `src/data/docs.js` |

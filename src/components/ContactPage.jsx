@@ -2,15 +2,17 @@ import { useState } from 'react'
 import { PRODUCTS } from '../data/products'
 import submitLead from '../data/submitLead'
 import { useT } from '../i18n'
+import { PRIVACY_PATH, url } from '../routes'
 import Footer from './Footer'
 import Header from './Header'
+import FormField from './FormField'
+import { INPUT, LABEL } from './formStyles'
 import PillButton from './PillButton'
-import { PRIVACY_PATH, url } from '../routes'
 
-// The request form every "talk to sales" leads to. The design has no page for
-// it, so it borrows the home page's pieces: the same header and footer, the
-// light card of the client stories, the label-and-headline opening of every
-// block.
+// The "talk to sales" page: the request form every sales button leads to. The
+// design has no page for it, so it borrows the home page's pieces: the same
+// header and footer, the light card of the client stories, the
+// label-and-headline opening of every block.
 
 const FIELDS = [
   {
@@ -35,29 +37,6 @@ const FIELDS = [
   },
   { name: 'email', label: { en: 'Email', ua: 'Пошта' }, type: 'email', autoComplete: 'email' },
 ]
-
-const LABEL = 'mb-2 block text-[12px] uppercase text-muted'
-const INPUT =
-  'w-full border-b-[0.5px] border-muted bg-transparent pb-2 text-[16px] font-light text-ink outline-none transition-colors duration-300 focus:border-ink'
-
-function Field({ name, label, type, autoComplete, required }) {
-  const t = useT()
-  return (
-    <label className="block">
-      <span className={LABEL}>
-        {t(label)}
-        {required && ' *'}
-      </span>
-      <input
-        name={name}
-        type={type}
-        autoComplete={autoComplete}
-        required={required}
-        className={INPUT}
-      />
-    </label>
-  )
-}
 
 function RequestForm() {
   const t = useT()
@@ -104,7 +83,7 @@ function RequestForm() {
     <form onSubmit={onSubmit} className="flex flex-col gap-8">
       <div className="grid gap-8 sm:grid-cols-2">
         {FIELDS.map((field) => (
-          <Field key={field.name} {...field} />
+          <FormField key={field.name} {...field} />
         ))}
 
         <label className="block sm:col-span-2">

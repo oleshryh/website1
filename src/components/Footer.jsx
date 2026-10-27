@@ -5,12 +5,12 @@ import { useT } from '../i18n'
 import {
   BLOG_PATH,
   CASES_PATH,
-  CONTACT_PATH,
   DOCS_PATH,
   GALLERY_PATH,
   JOBS_PATH,
   PRIVACY_PATH,
   productPath,
+  SUPPORT_PATH,
   url,
 } from '../routes'
 import { SocialButton } from './SocialRail'
@@ -24,7 +24,7 @@ const COLUMNS = [
     title: { en: 'Resources', ua: 'Ресурси' },
     links: [
       { label: { en: 'Documentation', ua: 'Документація' }, href: DOCS_PATH },
-      { label: NAV.support, href: CONTACT_PATH },
+      { label: NAV.support, href: SUPPORT_PATH },
       { label: { en: 'Jobs', ua: 'Вакансії' }, href: JOBS_PATH },
       { label: { en: 'Legal', ua: 'Правова інформація' }, href: PRIVACY_PATH },
     ],

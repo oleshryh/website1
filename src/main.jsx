@@ -11,6 +11,7 @@ import JobsPage from './components/JobsPage.jsx'
 import LanguageProvider from './components/LanguageProvider.jsx'
 import PrivacyPage from './components/PrivacyPage.jsx'
 import ProductPage from './components/ProductPage.jsx'
+import SupportPage from './components/SupportPage.jsx'
 import { POSTS } from './data/blog'
 import { CASES } from './data/cases'
 import { PRODUCTS } from './data/products'
@@ -18,6 +19,7 @@ import { currentPath } from './routes'
 
 const PAGES = {
   '/contact': ContactPage,
+  '/support': SupportPage,
   '/privacy-policy': PrivacyPage,
   '/docs': DocsPage,
   '/jobs': JobsPage,
